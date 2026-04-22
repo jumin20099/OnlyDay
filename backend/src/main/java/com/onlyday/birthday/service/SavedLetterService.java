@@ -30,7 +30,7 @@ public class SavedLetterService {
 
     @Transactional
     public void saveLetter(UUID ownerId, UUID letterId) {
-        User owner = userService.getOrCreate(ownerId);
+        User owner = userService.getById(ownerId);
         if (savedLetterRepository.findByOwner_IdAndSourceLetterId(ownerId, letterId).isPresent()) {
             return;
         }

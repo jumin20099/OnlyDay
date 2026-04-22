@@ -1,23 +1,23 @@
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
-import ErrorBoundary from "./components/ErrorBoundary";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import { CakeProvider } from "./contexts/CakeContext";
-import Home from "./pages/Home";
-import CustomizePage from "./pages/CustomizePage";
-import CakePage from "./pages/CakePage";
+import LoginPage from "./pages/LoginPage";
+import CakesPage from "./pages/CakesPage";
+import CakeDetailPage from "./pages/CakeDetailPage";
 import SavedLettersPage from "./pages/SavedLettersPage";
+import NotFound from "./pages/NotFound";
+import { useAuthState } from "./hooks/useAuth";
 
 function Router() {
+  const { isAuthenticated } = useAuthState();
+
   return (
     <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/customize" component={CustomizePage} />
-      <Route path="/cake/:id" component={CakePage} />
+      <Route path="/login" component={LoginPage} />
+      <Route path="/">
+        {isAuthenticated ? <CakesPage /> : <LoginPage />}
+      </Route>
+      <Route path="/cakes" component={CakesPage} />
+      <Route path="/cake/:shareToken" component={CakeDetailPage} />
       <Route path="/saved-letters" component={SavedLettersPage} />
-      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -25,18 +25,7 @@ function Router() {
 
 function App() {
   return (
-    <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-      >
-        <CakeProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </CakeProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+    <Router />
   );
 }
 

@@ -30,7 +30,7 @@ public class CakeService {
     @Transactional
     public CakeDto.CakeSummary createCake(UUID ownerId, CakeDto.CreateRequest request) {
         validateTimeWindow(request.openAt(), request.closeAt());
-        User owner = userService.getOrCreate(ownerId);
+        User owner = userService.getById(ownerId);
 
         Cake cake = cakeRepository.save(Cake.builder()
                 .owner(owner)

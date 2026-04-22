@@ -3,6 +3,7 @@ package com.onlyday.birthday.repository;
 import com.onlyday.birthday.domain.letter.Letter;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,6 +19,14 @@ public interface LetterRepository extends JpaRepository<Letter, UUID> {
             order by l.createdAt asc
             """)
     List<Letter> findVisibleLettersByCakeId(@Param("cakeId") UUID cakeId);
+
+    @Query("""
+            select l from Letter l
+            join fetch l.candle c
+            join fetch c.cake ck
+            where l.id = :letterId
+            """)
+    Optional<Letter> findByIdWithCake(@Param("letterId") UUID letterId);
 
     @Modifying
     @Query("""

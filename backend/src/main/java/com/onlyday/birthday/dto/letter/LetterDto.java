@@ -10,6 +10,8 @@ public class LetterDto {
             UUID candleId,
             String nickname,
             String content,
+            String imageUrl,
+            boolean unlocked,
             OffsetDateTime createdAt
     ) {
     }

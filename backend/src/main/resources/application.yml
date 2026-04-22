@@ -22,6 +22,12 @@ app:
   jwt:
     supabase-secret: ${SUPABASE_JWT_SECRET}
     issuer: ${SUPABASE_JWT_ISSUER:https://supabase.io/auth/v1}
+    access-token-exp-seconds: ${JWT_ACCESS_TOKEN_EXP_SECONDS:86400}
   scheduler:
     letter-visibility-cron: ${LETTER_VISIBILITY_CRON:0 */30 * * * *}
     letter-cleanup-cron: ${LETTER_CLEANUP_CRON:0 0 2 * * *}
+  aws:
+    region: ${AWS_REGION}
+    s3-bucket: ${AWS_S3_BUCKET}
+    access-key: ${AWS_ACCESS_KEY_ID}
+    secret-key: ${AWS_SECRET_ACCESS_KEY}

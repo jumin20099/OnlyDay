@@ -52,6 +52,7 @@ public class CandleLetterService {
         letterRepository.save(Letter.builder()
                 .candle(candle)
                 .content(request.letterContent())
+                .imageUrl(request.letterImageUrl())
                 .visible(false)
                 .build());
 
@@ -95,6 +96,8 @@ public class CandleLetterService {
                         l.getCandle().getId(),
                         l.getCandle().getNickname(),
                         l.getContent(),
+                        l.getImageUrl(),
+                        true,
                         l.getCreatedAt()
                 ))
                 .toList();

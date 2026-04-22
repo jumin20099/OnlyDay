@@ -37,13 +37,17 @@ public class Letter extends BaseTimeEntity {
     @Column(name = "content", nullable = false, length = 1000)
     private String content;
 
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
+
     @Column(name = "is_visible", nullable = false)
     private boolean visible;
 
     @Builder
-    public Letter(Candle candle, String content, boolean visible) {
+    public Letter(Candle candle, String content, String imageUrl, boolean visible) {
         this.candle = candle;
         this.content = content;
+        this.imageUrl = imageUrl;
         this.visible = visible;
     }
 

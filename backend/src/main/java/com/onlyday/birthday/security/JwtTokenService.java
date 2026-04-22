@@ -1,7 +1,10 @@
 package com.onlyday.birthday.security;
 
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JOSEObjectType;
+import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -19,11 +22,36 @@ public class JwtTokenService {
 
     private final byte[] secret;
     private final String issuer;
+    private final long accessTokenExpSeconds;
 
     public JwtTokenService(@Value("${app.jwt.supabase-secret}") String secret,
-                           @Value("${app.jwt.issuer}") String issuer) {
+                           @Value("${app.jwt.issuer}") String issuer,
+                           @Value("${app.jwt.access-token-exp-seconds}") long accessTokenExpSeconds) {
         this.secret = secret.getBytes();
         this.issuer = issuer;
+        this.accessTokenExpSeconds = accessTokenExpSeconds;
+    }
+
+    public String createAccessToken(UUID userId, String email) {
+        try {
+            Instant now = Instant.now();
+            JWTClaimsSet claims = new JWTClaimsSet.Builder()
+                    .subject(userId.toString())
+                    .issuer(issuer)
+                    .issueTime(Date.from(now))
+                    .expirationTime(Date.from(now.plusSeconds(accessTokenExpSeconds)))
+                    .claim("email", email)
+                    .build();
+
+            SignedJWT signedJWT = new SignedJWT(
+                    new JWSHeader.Builder(JWSAlgorithm.HS256).type(JOSEObjectType.JWT).build(),
+                    claims
+            );
+            signedJWT.sign(new MACSigner(secret));
+            return signedJWT.serialize();
+        } catch (JOSEException ex) {
+            throw new BusinessException("TOKEN_GENERATION_FAILED", "Failed to generate token", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     public AuthUser parseUser(String token) {
