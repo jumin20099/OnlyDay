@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: onlyday-birthday-backend
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+
+server:
+  port: 8080
+
+app:
+  jwt:
+    supabase-secret: ${SUPABASE_JWT_SECRET}
+    issuer: ${SUPABASE_JWT_ISSUER:https://supabase.io/auth/v1}
+  scheduler:
+    letter-visibility-cron: ${LETTER_VISIBILITY_CRON:0 */30 * * * *}
+    letter-cleanup-cron: ${LETTER_CLEANUP_CRON:0 0 2 * * *}
