@@ -1,0 +1,303 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  /* MMD 감성 색상 팔레트 - 라벤더, 블러시 핑크, 페일 민트 */
+  --primary: oklch(0.68 0.15 280);
+  --primary-foreground: oklch(0.98 0.01 280);
+  --sidebar-primary: oklch(0.65 0.14 280);
+  --sidebar-primary-foreground: oklch(0.98 0.01 280);
+  --chart-1: oklch(0.72 0.12 280);
+  --chart-2: oklch(0.68 0.15 280);
+  --chart-3: oklch(0.65 0.14 280);
+  --chart-4: oklch(0.60 0.13 280);
+  --chart-5: oklch(0.55 0.12 280);
+  --radius: 1.2rem;
+  
+  /* 배경 - 몽환적인 그라디언트 */
+  --background: oklch(0.98 0.01 280);
+  --foreground: oklch(0.35 0.08 280);
+  --card: oklch(0.99 0.005 280);
+  --card-foreground: oklch(0.35 0.08 280);
+  --popover: oklch(0.99 0.005 280);
+  --popover-foreground: oklch(0.35 0.08 280);
+  
+  /* 보조 색상 - 블러시 핑크 */
+  --secondary: oklch(0.85 0.12 350);
+  --secondary-foreground: oklch(0.35 0.08 280);
+  
+  /* 음소거된 색상 */
+  --muted: oklch(0.92 0.02 280);
+  --muted-foreground: oklch(0.55 0.08 280);
+  
+  /* 악센트 - 페일 민트 */
+  --accent: oklch(0.82 0.08 160);
+  --accent-foreground: oklch(0.35 0.08 280);
+  
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  
+  /* 테두리 및 입력 */
+  --border: oklch(0.92 0.02 280);
+  --input: oklch(0.92 0.02 280);
+  --ring: oklch(0.68 0.15 280);
+  
+  /* 사이드바 */
+  --sidebar: oklch(0.98 0.01 280);
+  --sidebar-foreground: oklch(0.35 0.08 280);
+  --sidebar-accent: oklch(0.85 0.12 350);
+  --sidebar-accent-foreground: oklch(0.35 0.08 280);
+  --sidebar-border: oklch(0.92 0.02 280);
+  --sidebar-ring: oklch(0.68 0.15 280);
+}
+
+.dark {
+  --primary: oklch(0.72 0.12 280);
+  --primary-foreground: oklch(0.98 0.01 280);
+  --sidebar-primary: oklch(0.68 0.15 280);
+  --sidebar-primary-foreground: oklch(0.98 0.01 280);
+  --background: oklch(0.15 0.05 280);
+  --foreground: oklch(0.92 0.02 280);
+  --card: oklch(0.22 0.06 280);
+  --card-foreground: oklch(0.92 0.02 280);
+  --popover: oklch(0.22 0.06 280);
+  --popover-foreground: oklch(0.92 0.02 280);
+  --secondary: oklch(0.35 0.12 350);
+  --secondary-foreground: oklch(0.92 0.02 280);
+  --muted: oklch(0.35 0.06 280);
+  --muted-foreground: oklch(0.72 0.08 280);
+  --accent: oklch(0.50 0.08 160);
+  --accent-foreground: oklch(0.92 0.02 280);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.72 0.12 280);
+  --chart-1: oklch(0.72 0.12 280);
+  --chart-2: oklch(0.68 0.15 280);
+  --chart-3: oklch(0.65 0.14 280);
+  --chart-4: oklch(0.60 0.13 280);
+  --chart-5: oklch(0.55 0.12 280);
+  --sidebar: oklch(0.22 0.06 280);
+  --sidebar-foreground: oklch(0.92 0.02 280);
+  --sidebar-accent: oklch(0.35 0.12 350);
+  --sidebar-accent-foreground: oklch(0.92 0.02 280);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.72 0.12 280);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Noto Serif KR', serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Noto Serif KR', serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  p, span, div {
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  a[href],
+  select:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled) {
+    @apply cursor-pointer;
+  }
+}
+
+@layer components {
+  /**
+   * Custom container utility that centers content and adds responsive padding.
+   */
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+      max-width: 1280px;
+    }
+  }
+
+  /* MMD 커스텀 스타일 */
+  .cake-container {
+    @apply rounded-3xl shadow-lg;
+    background: linear-gradient(135deg, oklch(0.98 0.01 280) 0%, oklch(0.95 0.02 320) 100%);
+    position: relative;
+  }
+
+  .candle {
+    @apply transition-all duration-300;
+  }
+
+  .candle-flame {
+    animation: flicker 1.5s ease-in-out infinite;
+  }
+
+  @keyframes flicker {
+    0%, 100% {
+      opacity: 1;
+      transform: scaleY(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scaleY(1.1);
+    }
+  }
+
+  @keyframes twinkle {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.2);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.6);
+    }
+  }
+
+  .letter-card {
+    @apply rounded-2xl p-6 backdrop-blur-sm;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(200, 180, 220, 0.3);
+    animation: fadeInUp 0.5s ease-out;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, oklch(0.68 0.15 280) 0%, oklch(0.85 0.12 350) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* 버튼 호버 효과 */
+  button {
+    @apply transition-all duration-200;
+  }
+
+  button:hover:not(:disabled) {
+    @apply scale-105;
+  }
+
+  /* 카드 호버 효과 */
+  .letter-card:hover {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* 페이드인 애니메이션 */
+  .fade-in {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  /* 슬라이드인 애니메이션 */
+  .slide-in {
+    animation: slideInLeft 0.6s ease-out;
+  }
+
+  /* 입력 필드 포커스 효과 */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    @apply ring-2 ring-primary ring-offset-2;
+  }
+}
