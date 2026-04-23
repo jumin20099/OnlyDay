@@ -41,6 +41,10 @@ export type Letter = {
   letterId: string;
   candleId: string;
   nickname: string;
+  positionX: number;
+  positionY: number;
+  candleColor: string;
+  candleStyle: string;
   content: string | null;
   imageUrl?: string | null;
   unlocked: boolean;

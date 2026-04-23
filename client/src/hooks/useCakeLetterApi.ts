@@ -2,6 +2,7 @@ import { api } from "@/lib/api";
 import type {
   ApiResponse,
   Cake,
+  Candle,
   Letter,
   SavedLetter,
   UnlockState,
@@ -17,6 +18,22 @@ export function useCakes(options?: { enabled?: boolean }) {
       return data.data;
     },
     enabled: options?.enabled !== undefined ? options.enabled : true,
+  });
+}
+
+export function useCandles(
+  cakeId: string | undefined,
+  options?: { enabled?: boolean }
+) {
+  return useQuery({
+    queryKey: ["candles", cakeId],
+    queryFn: async () => {
+      const { data } = await api.get<ApiResponse<Candle[]>>(`/api/cakes/${cakeId}/candles`);
+      if (!data.success) throw new Error(data.error?.message ?? "촛불 조회 실패");
+      return data.data;
+    },
+    enabled:
+      (options?.enabled !== undefined ? options.enabled : true) && Boolean(cakeId),
   });
 }
 
@@ -55,6 +72,20 @@ export function useUpdateCake() {
   });
 }
 
+export function useDeleteCake() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (cakeId: string) => {
+      const { data } = await api.delete<ApiResponse<null>>(`/api/cakes/${cakeId}`);
+      if (!data.success) throw new Error(data.error?.message ?? "케이크 삭제 실패");
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["cakes"] });
+      qc.invalidateQueries({ queryKey: ["cake"] });
+    },
+  });
+}
+
 export function useCakeByShareToken(shareToken: string) {
   return useQuery({
     queryKey: ["cake", shareToken],
@@ -84,9 +115,12 @@ export function useCreateLetter() {
       if (!data.success) throw new Error(data.error?.message ?? "편지 생성 실패");
       return data.data;
     },
-    onSuccess: () => {
+    onSuccess: (_d, variables) => {
       qc.invalidateQueries({ queryKey: ["letters"] });
+      qc.invalidateQueries({ queryKey: ["candles"] });
+      qc.invalidateQueries({ queryKey: ["unlock"] });
       qc.invalidateQueries({ queryKey: ["cakes"] });
+      qc.invalidateQueries({ queryKey: ["cake", variables.cakeShareToken] });
     },
   });
 }
@@ -95,9 +129,17 @@ export function useLetters(cakeId?: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["letters", cakeId],
     queryFn: async () => {
-      const { data } = await api.get<ApiResponse<Letter[]>>(`/api/cakes/${cakeId}/letters`);
-      if (!data.success) throw new Error(data.error?.message ?? "편지 조회 실패");
-      return data.data;
+      try {
+        const { data } = await api.get<ApiResponse<Letter[]>>(`/api/cakes/${cakeId}/letters`);
+        if (!data.success) throw new Error(data.error?.message ?? "편지 조회 실패");
+        return data.data;
+      } catch (e: unknown) {
+        const err = e as { response?: { status?: number } };
+        if (err.response?.status === 403 || err.response?.status === 401) {
+          return [] as Letter[];
+        }
+        throw e;
+      }
     },
     enabled: options?.enabled !== undefined ? options.enabled : Boolean(cakeId),
   });

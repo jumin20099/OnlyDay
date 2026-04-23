@@ -18,10 +18,15 @@ public class LetterResponseMapper {
 
     public LetterDto.LetterResponse toLockedAwareResponse(Letter letter, int indexInVisibleOrder, int cakeCandleCount) {
         boolean unlocked = letterContentUnlockPolicy.isContentUnlocked(indexInVisibleOrder, cakeCandleCount);
+        var c = letter.getCandle();
         return new LetterDto.LetterResponse(
                 letter.getId(),
-                letter.getCandle().getId(),
-                letter.getCandle().getNickname(),
+                c.getId(),
+                c.getNickname(),
+                c.getPositionX(),
+                c.getPositionY(),
+                c.getCandleColor(),
+                c.getCandleStyle(),
                 unlocked ? letter.getContent() : null,
                 unlocked ? letter.getImageUrl() : null,
                 unlocked,

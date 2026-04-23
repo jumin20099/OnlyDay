@@ -33,6 +33,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/cakes/share/**").permitAll()
                         .requestMatchers("/api/cakes/*/candles").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/cakes/*/unlock-states").permitAll()
                         .requestMatchers(HttpMethod.POST, "/letters").permitAll()
                         .requestMatchers(HttpMethod.POST, "/files/upload").permitAll()
                         .requestMatchers("/letters", "/letters/**").authenticated()
