@@ -13,6 +13,27 @@ java {
     }
 }
 
+// Windows: 프로젝트/사용자 경로에 비ASCII(한글 등)가 있으면 Gradle worker가 compile/test ClassNotFound를 낼 수 있음.
+// ONLYDAY_BUILD_DIR(ASCII)가 있으면 그걸, 없고 경로에 비ASCII가 있으면 C:\__onlyday_b\build-<해시> 를 씀.
+def envBuild = System.getenv('ONLYDAY_BUILD_DIR')
+if (envBuild != null && !envBuild.isBlank()) {
+    layout.buildDirectory = file(envBuild)
+} else if (System.getProperty('os.name', '').toLowerCase().contains('windows')) {
+    def abs = projectDir.toString()
+    def hasNonAscii = false
+    for (int i = 0; i < abs.length(); i++) {
+        if (abs.charAt(i) > 127) {
+            hasNonAscii = true
+            break
+        }
+    }
+    if (hasNonAscii) {
+        def fallback = new File('C:/__onlyday_b/build-' + Integer.toUnsignedString(abs.hashCode()))
+        fallback.mkdirs()
+        layout.buildDirectory = fallback
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -28,7 +49,8 @@ dependencies {
 
     implementation 'com.nimbusds:nimbus-jose-jwt:9.40'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
-    implementation 'software.amazon.awssdk:s3:2.28.20'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-database-postgresql'
 
     runtimeOnly 'org.postgresql:postgresql'
 
@@ -37,8 +59,32 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'org.testcontainers:junit-jupiter'
+}
+
+tasks.named('bootRun') {
+    // db.<ref>.supabase.co 는 AAAA(IPv6)만 주는 경우가 있음. Windows에서 Java가 v4만 찾다 UnknownHostException 날 수 있어 v6 우선.
+    jvmArgs = [
+        '-Djava.net.preferIPv6Addresses=true',
+        '-Djava.net.preferIPv4Stack=false'
+    ]
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        excludeTags 'integration'
+    }
+}
+
+// Docker + Testcontainers 필요: ./gradlew integrationTest
+tasks.register('integrationTest', Test) {
+    group = 'verification'
+    description = 'Testcontainers(PostgreSQL) 등 통합 테스트'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform {
+        includeTags 'integration'
+    }
+    shouldRunAfter test
 }

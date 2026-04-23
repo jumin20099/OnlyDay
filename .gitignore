@@ -7,6 +7,9 @@ dist/
 build/
 *.dist
 
+# Gradle (local cache; lock files may fail `git add` on Windows)
+**/.gradle/
+
 # Environment variables
 .env
 .env.local

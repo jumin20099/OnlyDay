@@ -160,7 +160,8 @@ export default defineConfig({
       "@assets": path.resolve(import.meta.dirname, "attached_assets"),
     },
   },
-  envDir: path.resolve(import.meta.dirname),
+  // client/.env 의 VITE_* 를 읽도록 (루트에 .env 없을 때)
+  envDir: path.resolve(import.meta.dirname, "client"),
   root: path.resolve(import.meta.dirname, "client"),
   publicDir: path.resolve(import.meta.dirname, "client", "public"),
   build: {

@@ -1,19 +1,22 @@
 import {
-  uploadImageToS3,
+  uploadImageToStorage,
   useCakeByShareToken,
   useCreateLetter,
   useLetters,
   useSaveLetter,
   useUnlockStates,
 } from "@/hooks/useCakeLetterApi";
+import { useAuthState } from "@/hooks/useAuth";
 import { useState } from "react";
 import { useParams } from "wouter";
 
 export default function CakeDetailPage() {
   const { shareToken } = useParams<{ shareToken: string }>();
+  const { isAuthenticated } = useAuthState();
   const { data: cake } = useCakeByShareToken(shareToken);
-  const { data: letters = [] } = useLetters(cake?.cakeId);
-  const { data: unlockStates = [] } = useUnlockStates(cake?.cakeId);
+  const letterQueryOn = Boolean(cake?.cakeId) && isAuthenticated;
+  const { data: letters = [] } = useLetters(cake?.cakeId, { enabled: letterQueryOn });
+  const { data: unlockStates = [] } = useUnlockStates(cake?.cakeId, { enabled: letterQueryOn });
   const createLetter = useCreateLetter();
   const saveLetter = useSaveLetter();
 
@@ -26,7 +29,7 @@ export default function CakeDetailPage() {
   const submit = async () => {
     let imageUrl: string | undefined;
     if (imageFile) {
-      imageUrl = await uploadImageToS3(imageFile);
+      imageUrl = await uploadImageToStorage(imageFile);
     }
     await createLetter.mutateAsync({
       cakeShareToken: shareToken,
@@ -66,6 +69,9 @@ export default function CakeDetailPage() {
 
       <div className="border rounded p-4">
         <h2 className="font-semibold mb-2">서버 해금 상태</h2>
+        {!isAuthenticated && (
+          <p className="text-sm text-gray-500 mb-2">해금·편지 열람은 케이크 주인이 로그인한 경우에만 조회됩니다.</p>
+        )}
         <div className="space-y-1">
           {unlockStates.map((u) => (
             <p key={u.featureKey} className="text-sm">

@@ -1,0 +1,25 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  flyway:
+    enabled: false
+  main:
+    banner-mode: "off"
+  # @DynamicPropertySource(Testcontainers)에서 실제 URL로 덮어씀
+  datasource:
+    url: "jdbc:postgresql://127.0.0.1:65432/placeholder"
+    username: "test"
+    password: "test"
+
+# bootstrap 시 필수 키 — 실제는 테스트에서 쓰지 않음
+app:
+  jwt:
+    supabase-secret: 0123456789abcdef0123456789abcdef0123456789abcdef
+    issuer: test
+  supabase:
+    url: http://127.0.0.1
+    service-role-key: test
+    storage:
+      bucket: test
+      public-bucket: true

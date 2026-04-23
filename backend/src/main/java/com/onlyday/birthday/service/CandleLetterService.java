@@ -8,11 +8,12 @@ import com.onlyday.birthday.dto.letter.LetterDto;
 import com.onlyday.birthday.exception.BusinessException;
 import com.onlyday.birthday.repository.CandleRepository;
 import com.onlyday.birthday.repository.LetterRepository;
-import java.time.LocalDate;
+import com.onlyday.birthday.time.CakeKstTimeWindow;
+import java.time.Clock;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.IntStream;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,15 +25,21 @@ public class CandleLetterService {
     private final CandleRepository candleRepository;
     private final LetterRepository letterRepository;
     private final UnlockService unlockService;
+    private final LetterResponseMapper letterResponseMapper;
+    private final Clock clock;
 
     public CandleLetterService(CakeService cakeService,
                                CandleRepository candleRepository,
                                LetterRepository letterRepository,
-                               UnlockService unlockService) {
+                               UnlockService unlockService,
+                               LetterResponseMapper letterResponseMapper,
+                               Clock clock) {
         this.cakeService = cakeService;
         this.candleRepository = candleRepository;
         this.letterRepository = letterRepository;
         this.unlockService = unlockService;
+        this.letterResponseMapper = letterResponseMapper;
+        this.clock = clock;
     }
 
     @Transactional
@@ -85,27 +92,19 @@ public class CandleLetterService {
             throw new BusinessException("FORBIDDEN", "Only cake owner can view letters", HttpStatus.FORBIDDEN);
         }
 
-        LocalDate todayUtc = LocalDate.now(ZoneOffset.UTC);
-        if (!cake.getBirthday().equals(todayUtc)) {
-            throw new BusinessException("LETTER_NOT_VISIBLE", "Letters can be viewed only on birthday", HttpStatus.FORBIDDEN);
+        if (!CakeKstTimeWindow.isBirthdayTodayKst(clock, cake.getBirthday())) {
+            throw new BusinessException("LETTER_NOT_VISIBLE", "Letters can be viewed only on birthday (KST)", HttpStatus.FORBIDDEN);
         }
 
-        return letterRepository.findVisibleLettersByCakeId(cakeId).stream()
-                .map(l -> new LetterDto.LetterResponse(
-                        l.getId(),
-                        l.getCandle().getId(),
-                        l.getCandle().getNickname(),
-                        l.getContent(),
-                        l.getImageUrl(),
-                        true,
-                        l.getCreatedAt()
-                ))
+        List<Letter> letters = letterRepository.findVisibleLettersByCakeId(cakeId);
+        int candleCount = cake.getCandleCount();
+        return IntStream.range(0, letters.size())
+                .mapToObj(i -> letterResponseMapper.toLockedAwareResponse(letters.get(i), i, candleCount))
                 .toList();
     }
 
     private void validateWriteWindow(Cake cake) {
-        OffsetDateTime now = OffsetDateTime.now();
-        if (now.isBefore(cake.getOpenAt()) || now.isAfter(cake.getCloseAt())) {
+        if (!CakeKstTimeWindow.isWithinWriteWindow(clock, cake.getOpenAt(), cake.getCloseAt())) {
             throw new BusinessException("WRITE_WINDOW_CLOSED", "Letter writing is not allowed at this time", HttpStatus.BAD_REQUEST);
         }
     }

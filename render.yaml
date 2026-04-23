@@ -1,0 +1,14 @@
+# Render: Web Service + 환경변수(DB_URL, DB_USERNAME, DB_PASSWORD, SUPABASE_*) 설정
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: onlyday-birthday-api
+    rootDir: backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: PORT
+        value: 8080

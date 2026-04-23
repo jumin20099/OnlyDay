@@ -3,12 +3,13 @@ package com.onlyday.birthday.config;
 import com.onlyday.birthday.security.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -30,12 +31,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/files/presign").authenticated()
                         .requestMatchers("/api/cakes/share/**").permitAll()
                         .requestMatchers("/api/cakes/*/candles").permitAll()
-                        .requestMatchers("/letters").authenticated()
-                        .requestMatchers("/letters/**").authenticated()
-                        .requestMatchers("/cakes/share/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/letters").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/files/upload").permitAll()
+                        .requestMatchers("/letters", "/letters/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

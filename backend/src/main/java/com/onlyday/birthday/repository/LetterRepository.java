@@ -1,7 +1,7 @@
 package com.onlyday.birthday.repository;
 
 import com.onlyday.birthday.domain.letter.Letter;
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,7 +16,7 @@ public interface LetterRepository extends JpaRepository<Letter, UUID> {
             select l from Letter l
             join fetch l.candle c
             where c.cake.id = :cakeId and l.visible = true
-            order by l.createdAt asc
+            order by l.createdAt asc, l.id asc
             """)
     List<Letter> findVisibleLettersByCakeId(@Param("cakeId") UUID cakeId);
 
@@ -36,11 +36,15 @@ public interface LetterRepository extends JpaRepository<Letter, UUID> {
             """)
     int publishLettersByCakeIds(@Param("cakeIds") List<UUID> cakeIds);
 
-    @Modifying
+    /**
+     * KST 기준: 말소일 = (생일 + 14일)이 **지난** 케이크의 편지. ({@code birthday < todayKst - 14})
+     * 보관함(SavedLetter)에 있는 sourceLetterId 는 제외.
+     */
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
             delete from Letter l
-            where l.createdAt < :threshold
+            where l.candle.cake.birthday < :cutoffBirthday
             and l.id not in (select s.sourceLetterId from SavedLetter s)
             """)
-    int deleteExpiredUnsavedLetters(@Param("threshold") OffsetDateTime threshold);
+    int deleteExpiredUnsavedByCakeBirthday(@Param("cutoffBirthday") LocalDate cutoffBirthday);
 }

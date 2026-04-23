@@ -27,7 +27,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "cakes", indexes = {
         @Index(name = "idx_cake_owner_created", columnList = "owner_id,created_at"),
         @Index(name = "idx_cake_share_token", columnList = "share_token", unique = true),
-        @Index(name = "idx_cake_open_close", columnList = "open_at,close_at")
+        @Index(name = "idx_cake_open_close", columnList = "open_at,close_at"),
+        @Index(name = "idx_cake_birthday", columnList = "birthday")
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Cake extends BaseTimeEntity {
@@ -62,6 +63,10 @@ public class Cake extends BaseTimeEntity {
     @Column(name = "candle_count", nullable = false)
     private int candleCount;
 
+    /** Supabase Storage 등에 올린 완성/미리보기 케이크 이미지(선택). */
+    @Column(name = "cake_image_url", length = 2000)
+    private String cakeImageUrl;
+
     @Builder
     public Cake(User owner, String shareToken, String title, CakeFlavor flavor,
                 LocalDate birthday, OffsetDateTime openAt, OffsetDateTime closeAt) {
@@ -75,11 +80,16 @@ public class Cake extends BaseTimeEntity {
         this.candleCount = 0;
     }
 
-    public void update(String title, CakeFlavor flavor, OffsetDateTime openAt, OffsetDateTime closeAt) {
+    public void update(String title, CakeFlavor flavor, LocalDate birthday, OffsetDateTime openAt, OffsetDateTime closeAt) {
         this.title = title;
         this.flavor = flavor;
+        this.birthday = birthday;
         this.openAt = openAt;
         this.closeAt = closeAt;
+    }
+
+    public void setCakeImageUrl(String cakeImageUrl) {
+        this.cakeImageUrl = cakeImageUrl;
     }
 
     public void incrementCandleCount() {

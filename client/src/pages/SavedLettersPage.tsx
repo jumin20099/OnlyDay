@@ -1,7 +1,23 @@
+import { useAuthState } from "@/hooks/useAuth";
 import { useSavedLetters } from "@/hooks/useCakeLetterApi";
+import { useEffect } from "react";
+import { useLocation } from "wouter";
 
 export default function SavedLettersPage() {
-  const { data: letters = [] } = useSavedLetters();
+  const { isAuthenticated } = useAuthState();
+  const [, setLocation] = useLocation();
+  const { data: letters = [] } = useSavedLetters({ enabled: isAuthenticated });
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setLocation("/login");
+    }
+  }, [isAuthenticated, setLocation]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-3">
       <h1 className="text-2xl font-bold">저장된 편지</h1>

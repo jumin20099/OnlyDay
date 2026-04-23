@@ -5,7 +5,9 @@ import com.onlyday.birthday.domain.user.User;
 import com.onlyday.birthday.dto.cake.CakeDto;
 import com.onlyday.birthday.exception.BusinessException;
 import com.onlyday.birthday.repository.CakeRepository;
+import com.onlyday.birthday.time.CakeKstTimeWindow;
 import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -29,17 +31,20 @@ public class CakeService {
 
     @Transactional
     public CakeDto.CakeSummary createCake(UUID ownerId, CakeDto.CreateRequest request) {
-        validateTimeWindow(request.openAt(), request.closeAt());
         User owner = userService.getById(ownerId);
+        LocalDate birthday = request.birthday();
+        OffsetDateTime openAt = CakeKstTimeWindow.openAtForBirthday(birthday);
+        OffsetDateTime closeAt = CakeKstTimeWindow.closeAtForBirthday(birthday);
+        validateComputedWindow(openAt, closeAt);
 
         Cake cake = cakeRepository.save(Cake.builder()
                 .owner(owner)
                 .shareToken(generateToken())
                 .title(request.title())
                 .flavor(request.flavor())
-                .birthday(request.birthday())
-                .openAt(request.openAt())
-                .closeAt(request.closeAt())
+                .birthday(birthday)
+                .openAt(openAt)
+                .closeAt(closeAt)
                 .build());
         return toSummary(cake);
     }
@@ -60,11 +65,18 @@ public class CakeService {
 
     @Transactional
     public CakeDto.CakeSummary updateCake(UUID ownerId, UUID cakeId, CakeDto.UpdateRequest request) {
-        validateTimeWindow(request.openAt(), request.closeAt());
         Cake cake = cakeRepository.findById(cakeId)
                 .orElseThrow(() -> new BusinessException("CAKE_NOT_FOUND", "Cake not found", HttpStatus.NOT_FOUND));
         validateOwner(cake, ownerId);
-        cake.update(request.title(), request.flavor(), request.openAt(), request.closeAt());
+        LocalDate birthday = request.birthday();
+        OffsetDateTime openAt = CakeKstTimeWindow.openAtForBirthday(birthday);
+        OffsetDateTime closeAt = CakeKstTimeWindow.closeAtForBirthday(birthday);
+        validateComputedWindow(openAt, closeAt);
+        cake.update(request.title(), request.flavor(), birthday, openAt, closeAt);
+        if (request.cakeImageUrl() != null) {
+            String u = request.cakeImageUrl().trim();
+            cake.setCakeImageUrl(u.isEmpty() ? null : u);
+        }
         return toSummary(cake);
     }
 
@@ -106,9 +118,9 @@ public class CakeService {
         return candidate;
     }
 
-    private void validateTimeWindow(OffsetDateTime openAt, OffsetDateTime closeAt) {
+    private void validateComputedWindow(OffsetDateTime openAt, OffsetDateTime closeAt) {
         if (!openAt.isBefore(closeAt)) {
-            throw new BusinessException("INVALID_TIME_WINDOW", "openAt must be before closeAt", HttpStatus.BAD_REQUEST);
+            throw new BusinessException("INVALID_TIME_WINDOW", "openAt must be before closeAt", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -121,7 +133,8 @@ public class CakeService {
                 cake.getBirthday(),
                 cake.getOpenAt(),
                 cake.getCloseAt(),
-                cake.getCandleCount()
+                cake.getCandleCount(),
+                cake.getCakeImageUrl()
         );
     }
 }

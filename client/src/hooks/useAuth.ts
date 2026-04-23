@@ -1,14 +1,28 @@
 import { api } from "@/lib/api";
-import { clearSession, getStoredUser, setSession } from "@/lib/auth-storage";
+import { AUTH_STATE_EVENT, clearSession, getStoredUser, setSession } from "@/lib/auth-storage";
 import type { ApiResponse, AuthResponse, UserPayload } from "@/types/api";
 import { useMutation } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useSyncExternalStore } from "react";
 
 type LoginInput = { email: string; password: string };
 type SignupInput = { email: string; password: string; displayName: string };
 
+function subscribeAuthStorage(onStoreChange: () => void) {
+  const onStorage = () => onStoreChange();
+  window.addEventListener("storage", onStorage);
+  window.addEventListener(AUTH_STATE_EVENT, onStorage);
+  return () => {
+    window.removeEventListener("storage", onStorage);
+    window.removeEventListener(AUTH_STATE_EVENT, onStorage);
+  };
+}
+
 export function useAuthState() {
-  const user = useMemo(() => getStoredUser<UserPayload>(), []);
+  const user = useSyncExternalStore(
+    subscribeAuthStorage,
+    () => getStoredUser<UserPayload>(),
+    () => null
+  );
   return { user, isAuthenticated: Boolean(user) };
 }
 

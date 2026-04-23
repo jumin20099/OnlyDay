@@ -1,10 +1,22 @@
 spring:
   application:
     name: onlyday-birthday-backend
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 12MB
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:10}
+      minimum-idle: ${DB_POOL_MIN_IDLE:2}
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  # Supabase/호스트: JDBC URL 끝에 ?sslmode=require
   jpa:
     open-in-view: false
     hibernate:
@@ -12,13 +24,46 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc:
           time_zone: UTC
+  flyway:
+    enabled: ${FLYWAY_ENABLED:false}
+    locations: classpath:db/migration
+    baseline-on-migrate: true
 
 server:
-  port: 8080
+  port: ${PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+
+logging:
+  level:
+    com.onlyday: ${LOG_LEVEL_COM_ONLYDAY:INFO}
+    org.springframework.web: ${LOG_LEVEL_WEB:INFO}
+    org.hibernate.SQL: ${LOG_LEVEL_HIBERNATE_SQL:WARN}
+
+info:
+  app:
+    name: onlyday-birthday-backend
+    description: MMD 케이크/편지 — KST 시간, 잠금, 14일 말소
 
 app:
+  letter:
+    unlock-step-candles: ${UNLOCK_STEP_CANDLES:1}
+    retention-days-after-birthday: ${RETENTION_DAYS_AFTER_BIRTHDAY:14}
   jwt:
     supabase-secret: ${SUPABASE_JWT_SECRET}
     issuer: ${SUPABASE_JWT_ISSUER:https://supabase.io/auth/v1}
@@ -26,8 +71,9 @@ app:
   scheduler:
     letter-visibility-cron: ${LETTER_VISIBILITY_CRON:0 */30 * * * *}
     letter-cleanup-cron: ${LETTER_CLEANUP_CRON:0 0 2 * * *}
-  aws:
-    region: ${AWS_REGION}
-    s3-bucket: ${AWS_S3_BUCKET}
-    access-key: ${AWS_ACCESS_KEY_ID}
-    secret-key: ${AWS_SECRET_ACCESS_KEY}
+  supabase:
+    url: ${SUPABASE_URL}
+    service-role-key: ${SUPABASE_SERVICE_ROLE_KEY}
+    storage:
+      bucket: ${SUPABASE_STORAGE_BUCKET}
+      public-bucket: ${SUPABASE_STORAGE_PUBLIC:true}

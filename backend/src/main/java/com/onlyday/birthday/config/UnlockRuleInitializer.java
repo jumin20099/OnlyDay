@@ -1,5 +1,6 @@
 package com.onlyday.birthday.config;
 
+import com.onlyday.birthday.domain.unlock.UnlockFeatureKeys;
 import com.onlyday.birthday.domain.unlock.UnlockRule;
 import com.onlyday.birthday.repository.UnlockRuleRepository;
 import jakarta.annotation.PostConstruct;
@@ -23,9 +24,21 @@ public class UnlockRuleInitializer {
             return;
         }
         unlockRuleRepository.saveAll(List.of(
-                UnlockRule.builder().featureKey("TOPPING_SPARKLE").thresholdCount(5).description("Sparkle topping enabled").build(),
-                UnlockRule.builder().featureKey("FANCY_CANDLES").thresholdCount(15).description("Fancy candle animations enabled").build(),
-                UnlockRule.builder().featureKey("GOLDEN_LAYER").thresholdCount(30).description("Golden cake layer enabled").build()
+                UnlockRule.builder()
+                        .featureKey(UnlockFeatureKeys.TOPPING_SPARKLE)
+                        .thresholdCount(5)
+                        .description("Sparkle topping enabled")
+                        .build(),
+                UnlockRule.builder()
+                        .featureKey(UnlockFeatureKeys.FANCY_CANDLES)
+                        .thresholdCount(15)
+                        .description("Fancy candle animations enabled")
+                        .build(),
+                UnlockRule.builder()
+                        .featureKey(UnlockFeatureKeys.GOLDEN_LAYER)
+                        .thresholdCount(30)
+                        .description("Golden cake layer enabled")
+                        .build()
         ));
     }
 }

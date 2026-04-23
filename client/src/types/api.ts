@@ -24,6 +24,8 @@ export type Cake = {
   openAt: string;
   closeAt: string;
   candleCount: number;
+  /** 완성/스냅샷 케이크 이미지(선택, PUT /api/cakes로 설정) */
+  cakeImageUrl?: string | null;
 };
 
 export type Candle = {
@@ -39,8 +41,8 @@ export type Letter = {
   letterId: string;
   candleId: string;
   nickname: string;
-  content: string;
-  imageUrl?: string;
+  content: string | null;
+  imageUrl?: string | null;
   unlocked: boolean;
   createdAt: string;
 };

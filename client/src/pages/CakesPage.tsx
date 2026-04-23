@@ -1,11 +1,12 @@
-import { logout } from "@/hooks/useAuth";
+import { logout, useAuthState } from "@/hooks/useAuth";
 import { useCakes, useCreateCake } from "@/hooks/useCakeLetterApi";
 import { useState } from "react";
 import { useLocation } from "wouter";
 
 export default function CakesPage() {
+  const { isAuthenticated } = useAuthState();
   const [, navigate] = useLocation();
-  const { data: cakes = [] } = useCakes();
+  const { data: cakes = [] } = useCakes({ enabled: isAuthenticated });
   const createCake = useCreateCake();
   const [title, setTitle] = useState("내 생일 케이크");
   const [flavor, setFlavor] = useState<"CHOCOLATE" | "MANGO" | "MATCHA" | "STRAWBERRY" | "VANILLA">("CHOCOLATE");
@@ -13,16 +14,10 @@ export default function CakesPage() {
 
   const create = async () => {
     if (!birthday) return;
-    const openAt = new Date(`${birthday}T00:00:00.000Z`);
-    openAt.setUTCDate(openAt.getUTCDate() - 1);
-    const closeAt = new Date(`${birthday}T23:59:59.000Z`);
-
     await createCake.mutateAsync({
       title,
       flavor,
       birthday,
-      openAt: openAt.toISOString(),
-      closeAt: closeAt.toISOString(),
     });
   };
 
