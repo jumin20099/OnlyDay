@@ -33,6 +33,7 @@ public class CakeDto {
             String title,
             CakeFlavor flavor,
             String shareToken,
+            UUID ownerId,
             LocalDate birthday,
             OffsetDateTime openAt,
             OffsetDateTime closeAt,

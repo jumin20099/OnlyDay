@@ -1,9 +1,15 @@
 import { useLogin, useSignup } from "@/hooks/useAuth";
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useLocation, useSearch } from "wouter";
 
 export default function LoginPage() {
   const [, navigate] = useLocation();
+  const search = useSearch();
+  const nextPath = (() => {
+    const q = new URLSearchParams(search).get("next");
+    if (q && q.startsWith("/")) return q;
+    return "/cakes";
+  })();
   const login = useLogin();
   const signup = useSignup();
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -17,7 +23,7 @@ export default function LoginPage() {
     } else {
       await signup.mutateAsync({ email, password, displayName });
     }
-    navigate("/cakes");
+    navigate(nextPath);
   };
   const message =
     (login.error as Error | null)?.message ||

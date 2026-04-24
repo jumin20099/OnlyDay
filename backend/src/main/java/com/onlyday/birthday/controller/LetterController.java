@@ -31,7 +31,10 @@ public class LetterController {
 
     @PostMapping
     public ApiResponse<CandleDto.CandleResponse> createLetter(@Valid @RequestBody LetterCommandDto.CreateLetterRequest request) {
-        return ApiResponse.ok(letterFlowService.createLetterWithCandle(request));
+        var author = SecurityUtils.currentUserOptional()
+                .map(u -> u.userId())
+                .orElse(null);
+        return ApiResponse.ok(letterFlowService.createLetterWithCandle(author, request));
     }
 
     @PostMapping("/{id}/save")

@@ -3,7 +3,8 @@ import { FLAVOR_THEME } from "@/lib/onlydayTheme";
 import { useRef, useState } from "react";
 import { Link, useParams } from "wouter";
 import html2canvas from "html2canvas";
-import { ChevronLeft, Download } from "lucide-react";
+import { ChevronLeft, Download, Link2, Share2 } from "lucide-react";
+import { toast } from "sonner";
 
 export default function CakeShareResultPage() {
   const { shareToken } = useParams<{ shareToken: string }>();
@@ -11,6 +12,38 @@ export default function CakeShareResultPage() {
   const { data: candles = [] } = useCandles(cake?.cakeId, { enabled: Boolean(cake?.cakeId) });
   const cardRef = useRef<HTMLDivElement>(null);
   const [exporting, setExporting] = useState(false);
+
+  const pageUrl =
+    typeof window !== "undefined" && shareToken
+      ? `${window.location.origin}/cake/${shareToken}`
+      : "";
+
+  const copyPageLink = async () => {
+    if (!pageUrl) return;
+    try {
+      await navigator.clipboard.writeText(pageUrl);
+      toast.success("케이크 링크를 복사했어요.");
+    } catch {
+      toast.error("복사에 실패했어요.");
+    }
+  };
+
+  const sharePage = async () => {
+    if (!pageUrl) return;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: cake?.title ?? "Only Day",
+          text: "케이크에 촛불을 달아줘",
+          url: pageUrl,
+        });
+      } else {
+        await copyPageLink();
+      }
+    } catch {
+      /* cancelled */
+    }
+  };
 
   const downloadPng = async () => {
     if (!cardRef.current) return;
@@ -45,22 +78,40 @@ export default function CakeShareResultPage() {
 
   return (
     <div className="min-h-dvh bg-gradient-to-b from-[#1a0a12] via-[#2d1520] to-[#1a0a12] px-4 py-6 text-foreground">
-      <header className="mb-4 flex items-center justify-between text-white/90">
+      <header className="mb-2 flex flex-wrap items-center justify-between gap-2 text-white/90">
         <Link href={`/cake/${shareToken}`}>
           <span className="inline-flex items-center gap-1 text-sm">
             <ChevronLeft className="h-5 w-5" />
             케이크로
           </span>
         </Link>
-        <button
-          type="button"
-          onClick={downloadPng}
-          disabled={exporting}
-          className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1.5 text-xs font-medium text-white"
-        >
-          <Download className="h-4 w-4" />
-          {exporting ? "처리 중…" : "이미지 저장"}
-        </button>
+        <div className="flex flex-wrap items-center justify-end gap-1">
+          <button
+            type="button"
+            onClick={copyPageLink}
+            className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1.5 text-[10px] font-medium text-white"
+          >
+            <Link2 className="h-3.5 w-3.5" />
+            링크 복사
+          </button>
+          <button
+            type="button"
+            onClick={sharePage}
+            className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1.5 text-[10px] font-medium text-white"
+          >
+            <Share2 className="h-3.5 w-3.5" />
+            링크 공유
+          </button>
+          <button
+            type="button"
+            onClick={downloadPng}
+            disabled={exporting}
+            className="inline-flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1.5 text-[10px] font-medium text-white"
+          >
+            <Download className="h-3.5 w-3.5" />
+            {exporting ? "…" : "이미지"}
+          </button>
+        </div>
       </header>
 
       <p className="mb-3 text-center text-xs text-pink-200/80">1:1 인스타·스토리용</p>

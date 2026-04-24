@@ -36,8 +36,9 @@ public class LetterFlowService {
     }
 
     @Transactional
-    public CandleDto.CandleResponse createLetterWithCandle(LetterCommandDto.CreateLetterRequest request) {
+    public CandleDto.CandleResponse createLetterWithCandle(UUID authorUserIdOrNull, LetterCommandDto.CreateLetterRequest request) {
         return candleLetterService.addCandleWithLetter(
+                authorUserIdOrNull,
                 request.cakeShareToken(),
                 new CandleDto.AddCandleWithLetterRequest(
                         request.nickname(),
@@ -66,11 +67,11 @@ public class LetterFlowService {
         }
 
         var cake = letter.getCandle().getCake();
-        if (!CakeKstTimeWindow.isBirthdayTodayKst(clock, cake.getBirthday()) || !letter.isVisible()) {
+        if (!CakeKstTimeWindow.isBirthdayTodayKst(clock, cake.getBirthday())) {
             throw new BusinessException("LETTER_NOT_VISIBLE", "Letter not visible yet", HttpStatus.FORBIDDEN);
         }
 
-        List<Letter> ordered = letterRepository.findVisibleLettersByCakeId(cake.getId());
+        List<Letter> ordered = letterRepository.findAllLettersByCakeId(cake.getId());
         int index = -1;
         for (int i = 0; i < ordered.size(); i++) {
             if (ordered.get(i).getId().equals(letter.getId())) {
@@ -83,6 +84,7 @@ public class LetterFlowService {
         }
 
         int candleCount = cake.getCandleCount();
-        return letterResponseMapper.toLockedAwareResponse(letter, index, candleCount);
+        return letterResponseMapper.toLockedAwareResponse(letter, index, candleCount,
+                CakeKstTimeWindow.isBirthdayTodayKst(clock, cake.getBirthday()));
     }
 }

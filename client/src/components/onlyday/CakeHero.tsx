@@ -7,31 +7,48 @@ type Props = {
   cake: Cake;
   candles: Candle[];
   lettersByCandleId: Map<string, Letter>;
+  lettersPending: boolean;
+  isCakeOwner: boolean;
+  isAuthenticated: boolean;
+  isBirthdayKst: boolean;
+  onSaveLetter?: (letterId: string) => void;
+  saveLetterPending?: boolean;
   unlockBits: { sparkle: boolean; fancy: boolean; golden: boolean };
 };
 
-export function CakeHero({ cake, candles, lettersByCandleId, unlockBits }: Props) {
+export function CakeHero({
+  cake,
+  candles,
+  lettersByCandleId,
+  lettersPending,
+  isCakeOwner,
+  isAuthenticated,
+  isBirthdayKst,
+  onSaveLetter,
+  saveLetterPending,
+  unlockBits,
+}: Props) {
   const t = FLAVOR_THEME[cake.flavor];
   const visualTier = (unlockBits.fancy ? 1 : 0) + (unlockBits.golden ? 1 : 0);
 
   return (
     <section
-      className="relative mx-auto flex w-full max-w-md flex-col items-center px-4 pb-2 pt-6"
+      className="relative mx-auto flex w-full max-w-md flex-col items-center px-3 pb-1 pt-3"
       style={{
-        minHeight: "min(78dvh, 640px)",
+        minHeight: "min(52dvh, 420px)",
       }}
     >
-      <p className="mb-1 text-[10px] font-medium uppercase tracking-[0.35em] text-muted-foreground">FOR</p>
+      <p className="mb-0.5 text-[9px] font-medium uppercase tracking-[0.35em] text-muted-foreground">FOR</p>
       <h1
-        className="font-serif text-3xl font-semibold sm:text-4xl"
+        className="font-serif text-2xl font-semibold sm:text-3xl"
         style={{ color: t.accent }}
       >
         {cake.title}
       </h1>
-      <p className="mt-2 text-center text-sm text-muted-foreground">오늘은, 오직 당신만의 하루예요.</p>
+      <p className="mt-1 text-center text-[11px] text-muted-foreground">오늘은, 오직 당신만의 하루예요.</p>
 
       <div
-        className="relative mt-8 aspect-square w-full max-w-[min(100%,360px)] overflow-hidden rounded-full shadow-[0_8px_60px_-12px_rgba(244,114,182,0.45)]"
+        className="relative z-0 mt-4 aspect-square w-full max-w-[min(100%,300px)] overflow-hidden rounded-full shadow-[0_8px_40px_-12px_rgba(244,114,182,0.45)]"
         style={{
           background: `radial-gradient(circle at 30% 20%, ${t.hero[0]} 0%, transparent 45%),
             radial-gradient(circle at 70% 80%, ${t.hero[1]} 0%, transparent 50%),
@@ -84,6 +101,12 @@ export function CakeHero({ cake, candles, lettersByCandleId, unlockBits }: Props
         <OrganicCandles
           candles={candles}
           lettersByCandleId={lettersByCandleId}
+          lettersPending={lettersPending}
+          isCakeOwner={isCakeOwner}
+          isAuthenticated={isAuthenticated}
+          isBirthdayKst={isBirthdayKst}
+          onSaveLetter={onSaveLetter}
+          saveLetterPending={saveLetterPending}
           visualTier={visualTier}
         />
       </div>

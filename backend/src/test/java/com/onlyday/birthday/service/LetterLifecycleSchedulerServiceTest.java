@@ -1,6 +1,5 @@
 package com.onlyday.birthday.service;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -36,21 +35,18 @@ class LetterLifecycleSchedulerServiceTest {
     }
 
     @Test
-    void cleanup_usesKstDateForCutoff() {
-        when(letterRepository.deleteExpiredUnsavedByCakeBirthday(
-                LocalDate.of(2026, 4, 10)))
-                .thenReturn(0);
+    void cleanup_usesKstAndIteratesNotSaved() {
+        when(letterRepository.findLettersNotInSaved())
+                .thenReturn(List.of());
         service.cleanupExpiredLetters();
-        verify(letterRepository).deleteExpiredUnsavedByCakeBirthday(
-                eq(LocalDate.of(2026, 4, 10)));
+        verify(letterRepository).findLettersNotInSaved();
     }
 
     @Test
-    void publish_asksRepositoryForTodaysBirthdayInKst() {
-        when(cakeRepository.findAllByBirthday(LocalDate.of(2026, 4, 24)))
+    void publish_asksRepositoryForTodaysBirthdayMonthAndDayKst() {
+        when(cakeRepository.findAllByBirthdayMonthAndDay(4, 24))
                 .thenReturn(List.of());
         service.publishLettersOnBirthday();
-        verify(cakeRepository).findAllByBirthday(
-                LocalDate.of(2026, 4, 24));
+        verify(cakeRepository).findAllByBirthdayMonthAndDay(4, 24);
     }
 }

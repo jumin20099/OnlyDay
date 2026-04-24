@@ -1,5 +1,6 @@
 package com.onlyday.birthday.service;
 
+import com.onlyday.birthday.domain.letter.Letter;
 import com.onlyday.birthday.repository.CakeRepository;
 import com.onlyday.birthday.repository.LetterRepository;
 import com.onlyday.birthday.time.CakeKstTimeWindow;
@@ -35,7 +36,9 @@ public class LetterLifecycleSchedulerService {
     @Scheduled(cron = "${app.scheduler.letter-visibility-cron}")
     public void publishLettersOnBirthday() {
         LocalDate todayKst = LocalDate.now(clock.withZone(CakeKstTimeWindow.KST));
-        List<UUID> cakeIds = cakeRepository.findAllByBirthday(todayKst).stream()
+        List<UUID> cakeIds = cakeRepository
+                .findAllByBirthdayMonthAndDay(todayKst.getMonthValue(), todayKst.getDayOfMonth())
+                .stream()
                 .map(c -> c.getId())
                 .toList();
         if (!cakeIds.isEmpty()) {
@@ -50,7 +53,11 @@ public class LetterLifecycleSchedulerService {
     @Scheduled(cron = "${app.scheduler.letter-cleanup-cron}")
     public void cleanupExpiredLetters() {
         LocalDate todayKst = LocalDate.now(clock.withZone(CakeKstTimeWindow.KST));
-        LocalDate cutoff = todayKst.minusDays(retentionDaysAfterBirthday);
-        letterRepository.deleteExpiredUnsavedByCakeBirthday(cutoff);
+        for (Letter l : letterRepository.findLettersNotInSaved()) {
+            if (CakeKstTimeWindow.isRetentionExpired(
+                    todayKst, l.getCandle().getCake().getBirthday(), retentionDaysAfterBirthday)) {
+                letterRepository.delete(l);
+            }
+        }
     }
 }

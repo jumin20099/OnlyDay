@@ -14,7 +14,7 @@ export function UrgencyBanner({ openAt, closeAt }: Props) {
 
   if (inWindow) {
     return (
-      <p className="mx-auto max-w-md px-4 pb-2 text-center text-[11px] leading-relaxed text-muted-foreground">
+      <p className="mx-auto max-w-md px-3 pb-1 text-center text-[10px] leading-relaxed text-muted-foreground">
         이 케이크는{" "}
         <time dateTime={closeAt} className="font-medium text-foreground/80">
           {format(close, "M월 d일 H:mm", { locale: ko })}
@@ -25,7 +25,7 @@ export function UrgencyBanner({ openAt, closeAt }: Props) {
   }
   if (isBefore(now, open)) {
     return (
-      <p className="mx-auto max-w-md px-4 pb-2 text-center text-[11px] text-muted-foreground">
+      <p className="mx-auto max-w-md px-3 pb-1 text-center text-[10px] text-muted-foreground">
         촛불 남기기는{" "}
         <time dateTime={openAt} className="font-medium text-foreground/80">
           {format(open, "M월 d일 H:mm", { locale: ko })}
@@ -35,7 +35,7 @@ export function UrgencyBanner({ openAt, closeAt }: Props) {
     );
   }
   return (
-    <p className="mx-auto max-w-md px-4 pb-2 text-center text-[11px] text-amber-800/80">
+    <p className="mx-auto max-w-md px-3 pb-1 text-center text-[10px] text-amber-800/80">
       지금은 이 케이크에 촛불을 남길 수 없는 기간이에요.
     </p>
   );

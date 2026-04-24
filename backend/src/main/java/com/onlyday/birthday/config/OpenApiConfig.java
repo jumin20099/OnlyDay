@@ -19,7 +19,8 @@ public class OpenApiConfig {
                         .title("OnlyDay Birthday API")
                         .version("0.0.1")
                         .description("Bearer JWT는 /auth/login·/auth/signup 응답 accessToken. "
-                                + "공유 링크에서 편지 작성(POST /letters)은 인증 없이 가능."))
+                                + "편지·촛불 작성(POST /letters, POST /api/cakes/{token}/candles)은 비로그인 가능; "
+                                + "Bearer로 로그인한 경우에만 케이크 주인·본인 케이크 쓰기가 차단됨."))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth",

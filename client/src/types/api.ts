@@ -17,6 +17,8 @@ export type AuthResponse = {
 
 export type Cake = {
   cakeId: string;
+  /** 케이크 주인(공유 뷰에서 “내 케이크인지” 판단) */
+  ownerId: string;
   title: string;
   flavor: "CHOCOLATE" | "MANGO" | "MATCHA" | "STRAWBERRY" | "VANILLA";
   shareToken: string;

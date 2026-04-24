@@ -1,7 +1,6 @@
 package com.onlyday.birthday.repository;
 
 import com.onlyday.birthday.domain.cake.Cake;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,6 +18,6 @@ public interface CakeRepository extends JpaRepository<Cake, UUID> {
     @Query("select c from Cake c where c.owner.id = :ownerId order by c.createdAt desc")
     List<Cake> findAllByOwnerId(@Param("ownerId") UUID ownerId);
 
-    @Query("select c from Cake c where c.birthday = :today")
-    List<Cake> findAllByBirthday(@Param("today") LocalDate today);
+    @Query("select c from Cake c where month(c.birthday) = :month and day(c.birthday) = :day")
+    List<Cake> findAllByBirthdayMonthAndDay(@Param("month") int month, @Param("day") int day);
 }

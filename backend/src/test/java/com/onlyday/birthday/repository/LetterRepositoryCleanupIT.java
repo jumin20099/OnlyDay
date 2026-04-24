@@ -36,7 +36,7 @@ class LetterRepositoryCleanupIT extends AbstractJpaPostgresIT {
 
     @Test
     @Transactional
-    void deleteExpiredUnsavedByCakeBirthday_deletesUnsavedAndKeepsSaved() {
+    void retention_deletesUnsavedAndKeepsSaved() {
         User owner = userRepository.save(User.builder()
                 .id(UUID.randomUUID())
                 .displayName("T")
@@ -44,16 +44,16 @@ class LetterRepositoryCleanupIT extends AbstractJpaPostgresIT {
                 .passwordHash("h")
                 .build());
 
-        LocalDate oldBirth = LocalDate.of(2010, 1, 1);
-        OffsetDateTime open = CakeKstTimeWindow.openAtForBirthday(oldBirth);
-        OffsetDateTime close = CakeKstTimeWindow.closeAtForBirthday(oldBirth);
+        LocalDate birth = LocalDate.of(2000, 1, 1);
+        OffsetDateTime open = CakeKstTimeWindow.openAtForBirthday(birth);
+        OffsetDateTime close = CakeKstTimeWindow.closeAtForBirthday(birth);
 
         Cake cake1 = cakeRepository.save(Cake.builder()
                 .owner(owner)
                 .shareToken("tok" + UUID.randomUUID().toString().substring(0, 32))
                 .title("c1")
                 .flavor(CakeFlavor.CHOCOLATE)
-                .birthday(oldBirth)
+                .birthday(birth)
                 .openAt(open)
                 .closeAt(close)
                 .build());
@@ -63,7 +63,7 @@ class LetterRepositoryCleanupIT extends AbstractJpaPostgresIT {
                 .shareToken("tok" + UUID.randomUUID().toString().substring(0, 32))
                 .title("c2")
                 .flavor(CakeFlavor.VANILLA)
-                .birthday(oldBirth)
+                .birthday(birth)
                 .openAt(open)
                 .closeAt(close)
                 .build());
@@ -78,8 +78,8 @@ class LetterRepositoryCleanupIT extends AbstractJpaPostgresIT {
                 .content("c")
                 .build());
 
-        LocalDate cutoff = LocalDate.of(2015, 6, 1);
-        int removed = letterRepository.deleteExpiredUnsavedByCakeBirthday(cutoff);
+        LocalDate todayKst = LocalDate.of(2015, 6, 1);
+        int removed = applyRetentionCleanup(todayKst, 14);
         assertThat(removed).isEqualTo(1);
         assertThat(letterRepository.findById(letter1.getId())).isPresent();
         assertThat(letterRepository.findById(letter2.getId())).isEmpty();
@@ -87,7 +87,7 @@ class LetterRepositoryCleanupIT extends AbstractJpaPostgresIT {
 
     @Test
     @Transactional
-    void deleteExpiredUnsavedByCakeBirthday_deletesAllWhenNotSaved() {
+    void retention_deletesAllWhenNotSaved() {
         User owner = userRepository.save(User.builder()
                 .id(UUID.randomUUID())
                 .displayName("T2")
@@ -95,31 +95,31 @@ class LetterRepositoryCleanupIT extends AbstractJpaPostgresIT {
                 .passwordHash("h")
                 .build());
 
-        LocalDate oldBirth = LocalDate.of(2011, 2, 1);
-        OffsetDateTime open = CakeKstTimeWindow.openAtForBirthday(oldBirth);
-        OffsetDateTime close = CakeKstTimeWindow.closeAtForBirthday(oldBirth);
+        LocalDate birth = LocalDate.of(2000, 2, 1);
+        OffsetDateTime open = CakeKstTimeWindow.openAtForBirthday(birth);
+        OffsetDateTime close = CakeKstTimeWindow.closeAtForBirthday(birth);
 
         Cake cake = cakeRepository.save(Cake.builder()
                 .owner(owner)
                 .shareToken("tok" + UUID.randomUUID().toString().substring(0, 32))
                 .title("c")
                 .flavor(CakeFlavor.MATCHA)
-                .birthday(oldBirth)
+                .birthday(birth)
                 .openAt(open)
                 .closeAt(close)
                 .build());
 
         Letter l = persistLetter(cake, "x");
 
-        LocalDate cutoff = LocalDate.of(2012, 1, 1);
-        int removed = letterRepository.deleteExpiredUnsavedByCakeBirthday(cutoff);
+        LocalDate todayKst = LocalDate.of(2012, 1, 1);
+        int removed = applyRetentionCleanup(todayKst, 14);
         assertThat(removed).isEqualTo(1);
         assertThat(letterRepository.findById(l.getId())).isEmpty();
     }
 
     @Test
     @Transactional
-    void deleteExpiredUnsavedByCakeBirthday_doesNotDeleteWhenBirthdayAfterCutoff() {
+    void retention_doesNotDeleteWhenWithinWindowAfterLastBirthday() {
         User owner = userRepository.save(User.builder()
                 .id(UUID.randomUUID())
                 .displayName("T3")
@@ -127,26 +127,38 @@ class LetterRepositoryCleanupIT extends AbstractJpaPostgresIT {
                 .passwordHash("h")
                 .build());
 
-        LocalDate newBirth = LocalDate.of(2030, 1, 1);
-        OffsetDateTime open = CakeKstTimeWindow.openAtForBirthday(newBirth);
-        OffsetDateTime close = CakeKstTimeWindow.closeAtForBirthday(newBirth);
+        LocalDate birth = LocalDate.of(2000, 1, 1);
+        OffsetDateTime open = CakeKstTimeWindow.openAtForBirthday(birth);
+        OffsetDateTime close = CakeKstTimeWindow.closeAtForBirthday(birth);
 
         Cake cake = cakeRepository.save(Cake.builder()
                 .owner(owner)
                 .shareToken("tok" + UUID.randomUUID().toString().substring(0, 32))
                 .title("future")
                 .flavor(CakeFlavor.STRAWBERRY)
-                .birthday(newBirth)
+                .birthday(birth)
                 .openAt(open)
                 .closeAt(close)
                 .build());
 
         Letter l = persistLetter(cake, "f");
 
-        LocalDate cutoff = LocalDate.of(2020, 1, 1);
-        int removed = letterRepository.deleteExpiredUnsavedByCakeBirthday(cutoff);
+        LocalDate todayKst = LocalDate.of(2020, 1, 10);
+        int removed = applyRetentionCleanup(todayKst, 14);
         assertThat(removed).isEqualTo(0);
         assertThat(letterRepository.findById(l.getId())).isPresent();
+    }
+
+    private int applyRetentionCleanup(LocalDate todayKst, int retentionDays) {
+        int n = 0;
+        for (Letter l : letterRepository.findLettersNotInSaved()) {
+            if (CakeKstTimeWindow.isRetentionExpired(
+                    todayKst, l.getCandle().getCake().getBirthday(), retentionDays)) {
+                letterRepository.delete(l);
+                n++;
+            }
+        }
+        return n;
     }
 
     private Letter persistLetter(Cake cake, String content) {

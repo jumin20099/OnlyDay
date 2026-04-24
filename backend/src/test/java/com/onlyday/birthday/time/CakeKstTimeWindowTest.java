@@ -22,10 +22,10 @@ class CakeKstTimeWindowTest {
     }
 
     @Test
-    void isBirthdayTodayKst_usesKstDate() {
+    void isBirthdayTodayKst_usesKstDate_andIgnoresStoredYear() {
         // 2026-03-09 16:00 UTC = 2026-03-10 01:00 KST
         Clock clock = Clock.fixed(Instant.parse("2026-03-09T16:00:00Z"), ZoneId.of("UTC"));
-        assertThat(CakeKstTimeWindow.isBirthdayTodayKst(clock, LocalDate.of(2026, 3, 10))).isTrue();
+        assertThat(CakeKstTimeWindow.isBirthdayTodayKst(clock, LocalDate.of(2007, 3, 10))).isTrue();
     }
 
     @Test

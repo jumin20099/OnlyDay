@@ -16,7 +16,7 @@ public class LetterCommandDto {
             @NotNull @DecimalMin("0.0") @DecimalMax("1.0") Double positionY,
             @NotBlank @Size(max = 30) String candleColor,
             @NotBlank @Size(max = 30) String candleStyle,
-            @NotBlank @Size(max = 1000) String content,
+            @NotBlank @Size(max = 2000) String content,
             @Size(max = 500) String imageUrl
     ) {
     }

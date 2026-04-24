@@ -50,6 +50,9 @@ export const UNLOCK_LABELS: Record<string, string> = {
   GOLDEN_LAYER: "골든 레이어",
 };
 
+/** 축하 팝업·주인 ‘나중에 보기’ 큐에서 사용하는 표시 순서 */
+export const UNLOCK_FEATURE_ORDER = ["TOPPING_SPARKLE", "FANCY_CANDLES", "GOLDEN_LAYER"] as const;
+
 export function completionGoalCandleCount(unlockStates: { thresholdCount: number }[]): number {
   if (unlockStates.length === 0) return 30;
   return Math.max(...unlockStates.map((u) => u.thresholdCount));

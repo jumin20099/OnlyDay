@@ -39,7 +39,10 @@ public class CandleLetterController {
             @PathVariable String shareToken,
             @Valid @RequestBody CandleDto.AddCandleWithLetterRequest request
     ) {
-        return ApiResponse.ok(candleLetterService.addCandleWithLetter(shareToken, request));
+        var author = SecurityUtils.currentUserOptional()
+                .map(u -> u.userId())
+                .orElse(null);
+        return ApiResponse.ok(candleLetterService.addCandleWithLetter(author, shareToken, request));
     }
 
     @GetMapping("/{cakeId}/candles")

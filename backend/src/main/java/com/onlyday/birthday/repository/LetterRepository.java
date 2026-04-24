@@ -1,7 +1,6 @@
 package com.onlyday.birthday.repository;
 
 import com.onlyday.birthday.domain.letter.Letter;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,6 +19,15 @@ public interface LetterRepository extends JpaRepository<Letter, UUID> {
             """)
     List<Letter> findVisibleLettersByCakeId(@Param("cakeId") UUID cakeId);
 
+    /** 생일 당일 케이크 주인 열람용(스케줄러로 published 되기 전 편지도 포함). */
+    @Query("""
+            select l from Letter l
+            join fetch l.candle c
+            where c.cake.id = :cakeId
+            order by l.createdAt asc, l.id asc
+            """)
+    List<Letter> findAllLettersByCakeId(@Param("cakeId") UUID cakeId);
+
     @Query("""
             select l from Letter l
             join fetch l.candle c
@@ -36,15 +44,15 @@ public interface LetterRepository extends JpaRepository<Letter, UUID> {
             """)
     int publishLettersByCakeIds(@Param("cakeIds") List<UUID> cakeIds);
 
-    /**
-     * KST 기준: 말소일 = (생일 + 14일)이 **지난** 케이크의 편지. ({@code birthday < todayKst - 14})
-     * 보관함(SavedLetter)에 있는 sourceLetterId 는 제외.
-     */
-    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
-            delete from Letter l
-            where l.candle.cake.birthday < :cutoffBirthday
-            and l.id not in (select s.sourceLetterId from SavedLetter s)
+            select l from Letter l
+            join fetch l.candle c
+            join fetch c.cake k
+            where l.id not in (select s.sourceLetterId from SavedLetter s)
             """)
-    int deleteExpiredUnsavedByCakeBirthday(@Param("cutoffBirthday") LocalDate cutoffBirthday);
+    List<Letter> findLettersNotInSaved();
+
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
+    @Query("delete from Letter l where l.candle.cake.id = :cakeId")
+    void deleteAllByCakeId(@Param("cakeId") UUID cakeId);
 }

@@ -17,7 +17,14 @@ public class LetterResponseMapper {
     }
 
     public LetterDto.LetterResponse toLockedAwareResponse(Letter letter, int indexInVisibleOrder, int cakeCandleCount) {
-        boolean unlocked = letterContentUnlockPolicy.isContentUnlocked(indexInVisibleOrder, cakeCandleCount);
+        return toLockedAwareResponse(letter, indexInVisibleOrder, cakeCandleCount, false);
+    }
+
+    /** 생일 당일 케이크 주인은 잠금 규칙 없이 본문 열람. */
+    public LetterDto.LetterResponse toLockedAwareResponse(
+            Letter letter, int indexInVisibleOrder, int cakeCandleCount, boolean ownerUnlockedOnBirthday) {
+        boolean unlocked = ownerUnlockedOnBirthday
+                || letterContentUnlockPolicy.isContentUnlocked(indexInVisibleOrder, cakeCandleCount);
         var c = letter.getCandle();
         return new LetterDto.LetterResponse(
                 letter.getId(),

@@ -1,32 +1,114 @@
 import type { Candle, Letter } from "@/types/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useMemo } from "react";
+import { createPortal } from "react-dom";
+import { Bookmark } from "lucide-react";
 
 type Props = {
   candles: Candle[];
   lettersByCandleId: Map<string, Letter>;
+  /** 주인+생일일 때 편지 API 로딩 중 */
+  lettersPending: boolean;
+  isCakeOwner: boolean;
+  isAuthenticated: boolean;
+  isBirthdayKst: boolean;
+  onSaveLetter?: (letterId: string) => void;
+  saveLetterPending?: boolean;
   /** 해금 시각 효과 강도 (0~2) */
   visualTier: number;
   className?: string;
 };
 
-export function OrganicCandles({ candles, lettersByCandleId, visualTier, className = "" }: Props) {
+export function OrganicCandles({
+  candles,
+  lettersByCandleId,
+  lettersPending,
+  isCakeOwner,
+  isAuthenticated,
+  isBirthdayKst,
+  onSaveLetter,
+  saveLetterPending = false,
+  visualTier,
+  className = "",
+}: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const sorted = useMemo(
     () => [...candles].sort((a, b) => a.candleId.localeCompare(b.candleId)),
     [candles]
   );
+  const activeCandle = activeId ? sorted.find((c) => c.candleId === activeId) : null;
+  const activeLetter = activeId ? lettersByCandleId.get(activeId) : undefined;
+
+  const bodyHint = (() => {
+    if (isCakeOwner && isAuthenticated && isBirthdayKst) {
+      if (lettersPending) {
+        return <p className="mt-3 text-sm text-muted-foreground">편지를 불러오는 중…</p>;
+      }
+      if (activeLetter?.unlocked) {
+        return (
+          <>
+            {activeLetter.content != null && activeLetter.content.length > 0 ? (
+              <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-foreground/90">
+                {activeLetter.content}
+              </p>
+            ) : (
+              <p className="mt-3 text-sm text-muted-foreground">(빈 편지)</p>
+            )}
+            {activeLetter.imageUrl ? (
+              <img
+                src={activeLetter.imageUrl}
+                alt=""
+                className="mt-3 max-h-48 w-full rounded-2xl object-contain"
+              />
+            ) : null}
+          </>
+        );
+      }
+      if (activeLetter && !activeLetter.unlocked) {
+        return (
+          <p className="mt-3 text-sm text-muted-foreground">
+            촛불이 모이는 순서에 맞춰 본문이 풀려요. 잠시 후 다시 눌러 보세요.
+          </p>
+        );
+      }
+      return (
+        <p className="mt-3 text-sm text-muted-foreground">
+          이 촛불에 맞는 편지를 찾지 못했어요. 잠시 후 다시 열어 보세요.
+        </p>
+      );
+    }
+    if (isCakeOwner && !isAuthenticated) {
+      return (
+        <p className="mt-3 text-sm text-muted-foreground">
+          본문을 읽으려면 케이크를 만든 계정으로 <strong>로그인</strong>한 뒤, <strong>생일 당일(KST)</strong>에 다시
+          열어주세요.
+        </p>
+      );
+    }
+    if (isCakeOwner && isAuthenticated && !isBirthdayKst) {
+      return (
+        <p className="mt-3 text-sm text-muted-foreground">
+          케이크 <strong>주인은 생일 당일(KST)</strong>에 여기서 편지 본문을 읽을 수 있어요. (오늘은 생일이
+          아니에요.)
+        </p>
+      );
+    }
+    return (
+      <p className="mt-3 text-sm text-muted-foreground">
+        닉네임·촛불만 함께 볼 수 있어요. <strong>편지 본문</strong>은 생일인 친구(이 케이크 주인)만 볼 수 있어요.
+      </p>
+    );
+  })();
 
   return (
-    <div className={`absolute inset-0 pointer-events-none ${className}`}>
+    <div className={`pointer-events-none absolute inset-0 z-30 ${className}`}>
       {sorted.map((c) => {
-        const letter = lettersByCandleId.get(c.candleId);
         const isOpen = activeId === c.candleId;
         const glow = 8 + visualTier * 6 + (isOpen ? 12 : 0);
         return (
           <div
             key={c.candleId}
-            className="absolute pointer-events-auto -translate-x-1/2 -translate-y-1/2"
+            className="absolute -translate-x-1/2 -translate-y-1/2"
             style={{
               left: `${c.positionX * 100}%`,
               top: `${c.positionY * 100}%`,
@@ -35,11 +117,12 @@ export function OrganicCandles({ candles, lettersByCandleId, visualTier, classNa
             <button
               type="button"
               onClick={() => setActiveId(isOpen ? null : c.candleId)}
-              className="relative flex flex-col items-center gap-0.5 outline-none"
-              aria-label={`${c.nickname} 촛불`}
+              className="pointer-events-auto relative flex flex-col items-center gap-0.5 outline-none"
+              style={{ zIndex: isOpen ? 50 : 20 }}
+              aria-label={`${c.nickname} 촛불, 편지 열기`}
             >
               <motion.div
-                animate={{ scale: isOpen ? 1.15 : 1, filter: isOpen ? "brightness(1.15)" : "brightness(1)" }}
+                animate={{ scale: isOpen ? 1.12 : 1, filter: isOpen ? "brightness(1.12)" : "brightness(1)" }}
                 transition={{ type: "spring", stiffness: 400, damping: 24 }}
                 className="relative"
               >
@@ -61,33 +144,62 @@ export function OrganicCandles({ candles, lettersByCandleId, visualTier, classNa
                   }}
                 />
               </motion.div>
-              <span className="max-w-[4.5rem] truncate text-[10px] font-medium text-foreground/70">
+              <span className="max-w-[4.5rem] truncate text-[10px] font-medium text-foreground/80 drop-shadow-sm">
                 {c.nickname}
               </span>
             </button>
-            <AnimatePresence>
-              {isOpen && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.92, y: 4 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: 6 }}
-                  transition={{ duration: 0.22 }}
-                  className="pointer-events-none absolute left-1/2 top-0 z-20 w-48 -translate-x-1/2 -translate-y-full rounded-2xl border border-white/40 bg-white/90 px-3 py-2 text-left shadow-lg backdrop-blur-md"
-                >
-                  <p className="text-xs font-semibold text-foreground">{c.nickname}</p>
-                  {letter?.unlocked && letter.content ? (
-                    <p className="mt-1 text-xs leading-relaxed text-foreground/85">{letter.content}</p>
-                  ) : (
-                    <p className="mt-1 text-[11px] text-muted-foreground">
-                      본문은 생일 당일, 케이크 주인만 열 수 있어요.
-                    </p>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
         );
       })}
+
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {activeCandle && (
+              <motion.div
+                className="fixed inset-0 z-[200] flex items-end justify-center bg-black/45 p-4 pb-8 sm:items-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setActiveId(null)}
+              >
+                <motion.div
+                  role="dialog"
+                  aria-modal="true"
+                  className="max-h-[min(70dvh,480px)] w-full max-w-md overflow-y-auto rounded-3xl border border-white/40 bg-white/95 p-5 shadow-2xl backdrop-blur-md"
+                  initial={{ y: 28, opacity: 0, scale: 0.97 }}
+                  animate={{ y: 0, opacity: 1, scale: 1 }}
+                  exit={{ y: 20, opacity: 0, scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 360, damping: 30 }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-rose-400/90">candle letter</p>
+                  <h3 className="mt-1 font-serif text-xl text-foreground">{activeCandle.nickname}</h3>
+                  {bodyHint}
+                  {onSaveLetter && activeLetter?.unlocked && (
+                      <button
+                        type="button"
+                        disabled={saveLetterPending}
+                        onClick={() => onSaveLetter(activeLetter.letterId)}
+                        className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-pink-200/80 bg-pink-50/80 py-2.5 text-sm font-medium text-pink-900/90 transition hover:bg-pink-100/80 disabled:opacity-50"
+                      >
+                        <Bookmark className="h-4 w-4" />
+                        {saveLetterPending ? "저장 중…" : "보관함에 저장"}
+                      </button>
+                    )}
+                  <button
+                    type="button"
+                    className="mt-3 w-full rounded-2xl bg-rose-500/90 py-3 text-sm font-semibold text-white"
+                    onClick={() => setActiveId(null)}
+                  >
+                    닫기
+                  </button>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>,
+          document.body
+        )}
     </div>
   );
 }

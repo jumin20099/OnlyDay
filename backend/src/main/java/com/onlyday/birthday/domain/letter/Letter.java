@@ -34,7 +34,7 @@ public class Letter extends BaseTimeEntity {
     @JoinColumn(name = "candle_id", nullable = false, unique = true)
     private Candle candle;
 
-    @Column(name = "content", nullable = false, length = 1000)
+    @Column(name = "content", nullable = false, length = 2000)
     private String content;
 
     @Column(name = "image_url", length = 500)

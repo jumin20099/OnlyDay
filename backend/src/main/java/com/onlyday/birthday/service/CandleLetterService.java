@@ -43,8 +43,11 @@ public class CandleLetterService {
     }
 
     @Transactional
-    public CandleDto.CandleResponse addCandleWithLetter(String shareToken, CandleDto.AddCandleWithLetterRequest request) {
+    public CandleDto.CandleResponse addCandleWithLetter(UUID authorUserIdOrNull, String shareToken, CandleDto.AddCandleWithLetterRequest request) {
         Cake cake = cakeService.getCakeEntityByShareToken(shareToken);
+        if (authorUserIdOrNull != null && authorUserIdOrNull.equals(cake.getOwner().getId())) {
+            throw new BusinessException("OWN_CAKE_LETTER_FORBIDDEN", "You cannot leave a letter on your own cake", HttpStatus.BAD_REQUEST);
+        }
         validateWriteWindow(cake);
 
         Candle candle = candleRepository.save(Candle.builder()
@@ -96,15 +99,15 @@ public class CandleLetterService {
             throw new BusinessException("LETTER_NOT_VISIBLE", "Letters can be viewed only on birthday (KST)", HttpStatus.FORBIDDEN);
         }
 
-        List<Letter> letters = letterRepository.findVisibleLettersByCakeId(cakeId);
+        List<Letter> letters = letterRepository.findAllLettersByCakeId(cakeId);
         int candleCount = cake.getCandleCount();
         return IntStream.range(0, letters.size())
-                .mapToObj(i -> letterResponseMapper.toLockedAwareResponse(letters.get(i), i, candleCount))
+                .mapToObj(i -> letterResponseMapper.toLockedAwareResponse(letters.get(i), i, candleCount, true))
                 .toList();
     }
 
     private void validateWriteWindow(Cake cake) {
-        if (!CakeKstTimeWindow.isWithinWriteWindow(clock, cake.getOpenAt(), cake.getCloseAt())) {
+        if (!CakeKstTimeWindow.isWithinWriteWindowForBirthday(clock, cake.getBirthday())) {
             throw new BusinessException("WRITE_WINDOW_CLOSED", "Letter writing is not allowed at this time", HttpStatus.BAD_REQUEST);
         }
     }

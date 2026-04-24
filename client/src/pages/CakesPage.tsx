@@ -1,5 +1,6 @@
 import { logout, useAuthState } from "@/hooks/useAuth";
 import { useCakes, useCreateCake, useDeleteCake } from "@/hooks/useCakeLetterApi";
+import { parseBirthdayInputToIso, isValidCalendarDateYmd } from "@/lib/birthdayInput";
 import { FLAVOR_THEME } from "@/lib/onlydayTheme";
 import { useState } from "react";
 import { useLocation } from "wouter";
@@ -23,11 +24,17 @@ export default function CakesPage() {
   const deleteCake = useDeleteCake();
   const [title, setTitle] = useState("내 생일 케이크");
   const [flavor, setFlavor] = useState<Cake["flavor"]>("STRAWBERRY");
-  const [birthday, setBirthday] = useState("");
+  const [birthdayRaw, setBirthdayRaw] = useState("");
+
+  const parsedBirthday = (() => {
+    const iso = parseBirthdayInputToIso(birthdayRaw);
+    if (!iso || !isValidCalendarDateYmd(iso)) return null;
+    return iso;
+  })();
 
   const create = async () => {
-    if (!birthday) return;
-    await createCake.mutateAsync({ title, flavor, birthday });
+    if (!parsedBirthday) return;
+    await createCake.mutateAsync({ title, flavor, birthday: parsedBirthday });
   };
 
   const remove = async (cakeId: string, titleLabel: string) => {
@@ -94,7 +101,7 @@ export default function CakesPage() {
         </div>
 
         <div>
-          <p className="text-xs font-medium text-muted-foreground">맛 (가로로 스와이프)</p>
+          <p className="text-xs font-medium text-muted-foreground">맛 (가로로 스와이프) · 미리보기</p>
           <div
             className="mt-2 flex gap-3 overflow-x-auto pb-2 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             style={{ WebkitOverflowScrolling: "touch" }}
@@ -107,18 +114,27 @@ export default function CakesPage() {
                   key={f}
                   type="button"
                   onClick={() => setFlavor(f)}
-                  className={`shrink-0 snap-center rounded-2xl border-2 px-4 py-3 text-left text-sm transition ${
+                  className={`shrink-0 snap-center rounded-2xl border-2 p-0 text-left text-sm transition ${
                     on
                       ? "border-pink-300 bg-white/90 shadow-md"
                       : "border-transparent bg-white/40"
                   }`}
                 >
-                  <span className="text-lg">{th.emoji}</span>
-                  <div className="mt-0.5 font-medium">{th.label}</div>
                   <div
-                    className="mt-1 h-1 w-12 rounded-full"
-                    style={{ background: `linear-gradient(90deg,${th.accent}44,${th.accent})` }}
-                  />
+                    className="flex w-36 flex-col items-center justify-end overflow-hidden rounded-xl px-2 pb-2 pt-3"
+                    style={{
+                      background: `radial-gradient(circle at 30% 20%, ${th.hero[0]} 0%, transparent 50%),
+                        linear-gradient(160deg, ${th.hero[0]} 0%, ${th.hero[1]} 50%, ${th.hero[2]} 100%)`,
+                    }}
+                  >
+                    <span className="text-4xl drop-shadow">{th.emoji}</span>
+                    <div
+                      className="mt-2 w-full rounded-full py-1.5 text-center text-xs font-medium text-white/95 shadow-inner"
+                      style={{ backgroundColor: `${th.accent}cc` }}
+                    >
+                      {th.label}
+                    </div>
+                  </div>
                 </button>
               );
             })}
@@ -126,19 +142,25 @@ export default function CakesPage() {
         </div>
 
         <div>
-          <label className="text-xs font-medium text-muted-foreground">생일 (KST)</label>
+          <label className="text-xs font-medium text-muted-foreground">생일 (월·일, KST) — 20070123</label>
           <input
             className="mt-2 w-full rounded-2xl border border-white/40 bg-white/60 px-4 py-3 text-sm shadow-inner"
-            type="date"
-            value={birthday}
-            onChange={(e) => setBirthday(e.target.value)}
+            type="text"
+            inputMode="numeric"
+            placeholder="예) 20070123 또는 2007-01-23"
+            value={birthdayRaw}
+            onChange={(e) => setBirthdayRaw(e.target.value)}
+            autoComplete="bday"
           />
+          {birthdayRaw && !parsedBirthday && (
+            <p className="mt-1 text-[10px] text-amber-700/90">8자리 숫자(YYYYMMDD) 형식이면 자동으로 나눠서 저장돼요.</p>
+          )}
         </div>
 
         <button
           type="button"
           onClick={create}
-          disabled={!birthday || createCake.isPending}
+          disabled={!parsedBirthday || createCake.isPending}
           className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-rose-400 to-fuchsia-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-pink-300/30 disabled:opacity-40"
         >
           <Heart className="h-4 w-4" />

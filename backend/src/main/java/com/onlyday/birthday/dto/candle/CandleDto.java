@@ -15,7 +15,7 @@ public class CandleDto {
             @NotNull @DecimalMin("0.0") @DecimalMax("1.0") Double positionY,
             @NotBlank @Size(max = 30) String candleColor,
             @NotBlank @Size(max = 30) String candleStyle,
-            @NotBlank @Size(max = 1000) String letterContent,
+            @NotBlank @Size(max = 2000) String letterContent,
             @Size(max = 500) String letterImageUrl
     ) {
     }

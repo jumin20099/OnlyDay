@@ -5,8 +5,12 @@ import com.onlyday.birthday.domain.user.User;
 import com.onlyday.birthday.dto.cake.CakeDto;
 import com.onlyday.birthday.exception.BusinessException;
 import com.onlyday.birthday.repository.CakeRepository;
+import com.onlyday.birthday.repository.CakeUnlockStateRepository;
+import com.onlyday.birthday.repository.CandleRepository;
+import com.onlyday.birthday.repository.LetterRepository;
 import com.onlyday.birthday.time.CakeKstTimeWindow;
 import java.security.SecureRandom;
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -22,19 +26,34 @@ public class CakeService {
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private final CakeRepository cakeRepository;
+    private final LetterRepository letterRepository;
+    private final CandleRepository candleRepository;
+    private final CakeUnlockStateRepository cakeUnlockStateRepository;
     private final UserService userService;
+    private final Clock clock;
 
-    public CakeService(CakeRepository cakeRepository, UserService userService) {
+    public CakeService(
+            CakeRepository cakeRepository,
+            LetterRepository letterRepository,
+            CandleRepository candleRepository,
+            CakeUnlockStateRepository cakeUnlockStateRepository,
+            UserService userService,
+            Clock clock) {
         this.cakeRepository = cakeRepository;
+        this.letterRepository = letterRepository;
+        this.candleRepository = candleRepository;
+        this.cakeUnlockStateRepository = cakeUnlockStateRepository;
         this.userService = userService;
+        this.clock = clock;
     }
 
     @Transactional
     public CakeDto.CakeSummary createCake(UUID ownerId, CakeDto.CreateRequest request) {
         User owner = userService.getById(ownerId);
-        LocalDate birthday = request.birthday();
-        OffsetDateTime openAt = CakeKstTimeWindow.openAtForBirthday(birthday);
-        OffsetDateTime closeAt = CakeKstTimeWindow.closeAtForBirthday(birthday);
+        LocalDate birthday = CakeKstTimeWindow.normalizeToReferenceBirthday(request.birthday());
+        CakeKstTimeWindow.TimeWindow w = CakeKstTimeWindow.currentWriteWindowForPersistence(clock, birthday);
+        OffsetDateTime openAt = w.openAt();
+        OffsetDateTime closeAt = w.closeAt();
         validateComputedWindow(openAt, closeAt);
 
         Cake cake = cakeRepository.save(Cake.builder()
@@ -68,9 +87,10 @@ public class CakeService {
         Cake cake = cakeRepository.findById(cakeId)
                 .orElseThrow(() -> new BusinessException("CAKE_NOT_FOUND", "Cake not found", HttpStatus.NOT_FOUND));
         validateOwner(cake, ownerId);
-        LocalDate birthday = request.birthday();
-        OffsetDateTime openAt = CakeKstTimeWindow.openAtForBirthday(birthday);
-        OffsetDateTime closeAt = CakeKstTimeWindow.closeAtForBirthday(birthday);
+        LocalDate birthday = CakeKstTimeWindow.normalizeToReferenceBirthday(request.birthday());
+        CakeKstTimeWindow.TimeWindow w = CakeKstTimeWindow.currentWriteWindowForPersistence(clock, birthday);
+        OffsetDateTime openAt = w.openAt();
+        OffsetDateTime closeAt = w.closeAt();
         validateComputedWindow(openAt, closeAt);
         cake.update(request.title(), request.flavor(), birthday, openAt, closeAt);
         if (request.cakeImageUrl() != null) {
@@ -85,6 +105,10 @@ public class CakeService {
         Cake cake = cakeRepository.findById(cakeId)
                 .orElseThrow(() -> new BusinessException("CAKE_NOT_FOUND", "Cake not found", HttpStatus.NOT_FOUND));
         validateOwner(cake, ownerId);
+        // letters → candles → unlock rows 순으로 제거해야 FK 제약(23503)으로 삭제가 실패하지 않음
+        letterRepository.deleteAllByCakeId(cakeId);
+        candleRepository.deleteAllByCakeId(cakeId);
+        cakeUnlockStateRepository.deleteAllByCakeId(cakeId);
         cakeRepository.delete(cake);
     }
 
@@ -125,14 +149,16 @@ public class CakeService {
     }
 
     private CakeDto.CakeSummary toSummary(Cake cake) {
+        CakeKstTimeWindow.TimeWindow w = CakeKstTimeWindow.openCloseForDisplay(clock, cake.getBirthday());
         return new CakeDto.CakeSummary(
                 cake.getId(),
                 cake.getTitle(),
                 cake.getFlavor(),
                 cake.getShareToken(),
+                cake.getOwner().getId(),
                 cake.getBirthday(),
-                cake.getOpenAt(),
-                cake.getCloseAt(),
+                w.openAt(),
+                w.closeAt(),
                 cake.getCandleCount(),
                 cake.getCakeImageUrl()
         );
