@@ -5,9 +5,11 @@ import { Lock } from "lucide-react";
 type Props = {
   candleCount: number;
   unlockStates: UnlockState[];
+  /** 편지 본문 잠금 규칙 설명(백엔드 `unlock-step-candles`) */
+  letterUnlockStepCandles?: number;
 };
 
-export function ProgressUnlockStrip({ candleCount, unlockStates }: Props) {
+export function ProgressUnlockStrip({ candleCount, unlockStates, letterUnlockStepCandles = 1 }: Props) {
   const goal = completionGoalCandleCount(unlockStates);
   const pct = Math.min(100, Math.round((candleCount / Math.max(goal, 1)) * 100));
 
@@ -27,6 +29,13 @@ export function ProgressUnlockStrip({ candleCount, unlockStates }: Props) {
         />
       </div>
       <p className="mt-2 text-center text-[10px] text-muted-foreground">촛불을 눌러 마음을 확인해 보세요</p>
+      <p className="mt-2 text-center text-[9px] leading-relaxed text-muted-foreground/90">
+        편지 본문은 작성 순(첫 편지→두 번째…)에 맞춰 열려요.{" "}
+        <span className="text-foreground/80">
+          N번째는 촛불 <strong>{letterUnlockStepCandles}×N</strong>개
+        </span>
+        를 모이면 풀려요.
+      </p>
 
       <ul className="mt-3 space-y-2">
         {unlockStates.map((u) => (

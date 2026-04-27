@@ -7,6 +7,7 @@ type Props = {
   cake: Cake;
   candles: Candle[];
   lettersByCandleId: Map<string, Letter>;
+  letterIndexByCandleId: Map<string, number>;
   lettersPending: boolean;
   isCakeOwner: boolean;
   isAuthenticated: boolean;
@@ -14,12 +15,14 @@ type Props = {
   onSaveLetter?: (letterId: string) => void;
   saveLetterPending?: boolean;
   unlockBits: { sparkle: boolean; fancy: boolean; golden: boolean };
+  unlockStepCandles?: number;
 };
 
 export function CakeHero({
   cake,
   candles,
   lettersByCandleId,
+  letterIndexByCandleId,
   lettersPending,
   isCakeOwner,
   isAuthenticated,
@@ -27,6 +30,7 @@ export function CakeHero({
   onSaveLetter,
   saveLetterPending,
   unlockBits,
+  unlockStepCandles,
 }: Props) {
   const t = FLAVOR_THEME[cake.flavor];
   const visualTier = (unlockBits.fancy ? 1 : 0) + (unlockBits.golden ? 1 : 0);
@@ -103,6 +107,9 @@ export function CakeHero({
         <OrganicCandles
           candles={candles}
           lettersByCandleId={lettersByCandleId}
+          letterIndexByCandleId={letterIndexByCandleId}
+          totalCandleCount={cake.candleCount}
+          unlockStepCandles={unlockStepCandles}
           lettersPending={lettersPending}
           isCakeOwner={isCakeOwner}
           isAuthenticated={isAuthenticated}

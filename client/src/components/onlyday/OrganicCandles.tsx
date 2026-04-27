@@ -1,12 +1,19 @@
 import type { Candle, Letter } from "@/types/api";
+import { LETTER_CONTENT_UNLOCK_STEP, requiredCandlesForLetterIndex } from "@/lib/letterUnlock";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { Bookmark } from "lucide-react";
+import { LockedLetterCard } from "./LockedLetterCard";
 
 type Props = {
   candles: Candle[];
   lettersByCandleId: Map<string, Letter>;
+  /** `findAll` 순서와 같게: candleId → 0-based 인덱스 */
+  letterIndexByCandleId: Map<string, number>;
+  totalCandleCount: number;
+  /** 백엔드 `unlock-step-candles` 와 맞출 것 */
+  unlockStepCandles?: number;
   /** 주인+생일일 때 편지 API 로딩 중 */
   lettersPending: boolean;
   isCakeOwner: boolean;
@@ -22,6 +29,9 @@ type Props = {
 export function OrganicCandles({
   candles,
   lettersByCandleId,
+  letterIndexByCandleId,
+  totalCandleCount,
+  unlockStepCandles = LETTER_CONTENT_UNLOCK_STEP,
   lettersPending,
   isCakeOwner,
   isAuthenticated,
@@ -65,10 +75,14 @@ export function OrganicCandles({
         );
       }
       if (activeLetter && !activeLetter.unlocked) {
+        const letterIdx = activeId != null ? letterIndexByCandleId.get(activeId) ?? 0 : 0;
+        const need = requiredCandlesForLetterIndex(letterIdx, unlockStepCandles);
         return (
-          <p className="mt-3 text-sm text-muted-foreground">
-            촛불이 모이는 순서에 맞춰 본문이 풀려요. 잠시 후 다시 눌러 보세요.
-          </p>
+          <LockedLetterCard
+            required={need}
+            currentCandles={totalCandleCount}
+            ordinal={letterIdx + 1}
+          />
         );
       }
       return (

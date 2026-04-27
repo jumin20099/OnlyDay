@@ -1,6 +1,5 @@
 /**
- * MMD (내 생일 케이크를 꾸며줘) - 데이터 모델 및 타입 정의
- * 프론트엔드 전용 애플리케이션이므로 모든 데이터는 LocalStorage에 저장됨
+ * 데모/로컬 전용 타입(옛 MMD 흐름). 실서비스 케이크·편지는 `@/types/api` 를 쓰세요.
  */
 
 /**
@@ -40,7 +39,8 @@ export interface Letter {
   candleDesign: CandleDesign;
   createdAt: number; // timestamp
   isSaved: boolean; // 편지 보관함에 저장되었는지 여부
-  isLocked: boolean; // 촛불 수 부족으로 잠금 여부
+  /** 백엔드 LetterResponse 의 unlocked 와 맞춤: true = 잠기지 않음 */
+  unlocked: boolean;
 }
 
 /**

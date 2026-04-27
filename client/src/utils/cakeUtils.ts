@@ -34,7 +34,7 @@ export function createNewLetter(
     candleDesign,
     createdAt: Date.now(),
     isSaved: false,
-    isLocked: false,
+    unlocked: true,
   };
 }
 

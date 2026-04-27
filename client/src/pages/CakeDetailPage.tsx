@@ -19,6 +19,8 @@ import { isAfter, isBefore, parseISO } from "date-fns";
 import { ChevronLeft, ImageIcon, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { isCakeBirthdayTodayKst } from "@/lib/birthdayToday";
+import { LETTER_CONTENT_UNLOCK_STEP } from "@/lib/letterUnlock";
+import { WriteWindowBadge } from "@/components/onlyday/WriteWindowBadge";
 
 function shareUrl(shareToken: string) {
   if (typeof window === "undefined") return "";
@@ -61,6 +63,13 @@ export default function CakeDetailPage() {
     for (const l of letters) {
       m.set(l.candleId, l);
     }
+    return m;
+  }, [letters]);
+
+  /** 백엔드 `order by createdAt asc, id asc` 와 동일한 배열 순서 */
+  const letterIndexByCandleId = useMemo(() => {
+    const m = new Map<string, number>();
+    letters.forEach((l, i) => m.set(l.candleId, i));
     return m;
   }, [letters]);
 
@@ -203,12 +212,16 @@ export default function CakeDetailPage() {
         </div>
       </header>
 
-      <UrgencyBanner openAt={cake.openAt} closeAt={cake.closeAt} />
+      <div className="mx-auto flex max-w-md flex-col items-center px-4">
+        <WriteWindowBadge openAt={cake.openAt} closeAt={cake.closeAt} className="mb-1" />
+        <UrgencyBanner openAt={cake.openAt} closeAt={cake.closeAt} />
+      </div>
 
       <CakeHero
         cake={cake}
         candles={candles}
         lettersByCandleId={lettersByCandleId}
+        letterIndexByCandleId={letterIndexByCandleId}
         lettersPending={letterQueryOn && lettersPending}
         isCakeOwner={isOwner}
         isAuthenticated={isAuthenticated}
@@ -225,10 +238,29 @@ export default function CakeDetailPage() {
         }
         saveLetterPending={saveLetter.isPending}
         unlockBits={unlockBits}
+        unlockStepCandles={LETTER_CONTENT_UNLOCK_STEP}
       />
 
       <div className="shrink-0">
-        <ProgressUnlockStrip candleCount={cake.candleCount} unlockStates={unlockStates} />
+        <ProgressUnlockStrip
+          candleCount={cake.candleCount}
+          unlockStates={unlockStates}
+          letterUnlockStepCandles={LETTER_CONTENT_UNLOCK_STEP}
+        />
+      </div>
+
+      <div className="mx-auto w-full max-w-md px-4 pb-2">
+        <p className="text-center text-[10px] leading-relaxed text-muted-foreground">
+          <span className="font-medium text-foreground/80">촛불을 모으고 싶다면</span>{" "}
+          <button
+            type="button"
+            onClick={copyLink}
+            className="rounded-md font-semibold text-primary underline decoration-primary/30 underline-offset-2 transition hover:decoration-primary/80"
+          >
+            케이크 링크를 복사
+          </button>
+          해서 친구들에게 보내 주세요.
+        </p>
       </div>
 
       <LeaveCandleForm shareToken={shareToken!} canSubmit={inWriteWindow} isOwner={isOwner} />

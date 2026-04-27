@@ -39,6 +39,7 @@ export type Candle = {
   candleStyle: string;
 };
 
+/** `LetterDto.LetterResponse` (백엔드)와 일치. 본문·잠금은 촛불 수 / 작성 순과 연동. */
 export type Letter = {
   letterId: string;
   candleId: string;
@@ -49,6 +50,7 @@ export type Letter = {
   candleStyle: string;
   content: string | null;
   imageUrl?: string | null;
+  /** 편지 본문(및 이미지) 읽기 가능 */
   unlocked: boolean;
   createdAt: string;
 };
