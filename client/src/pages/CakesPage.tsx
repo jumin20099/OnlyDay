@@ -1,20 +1,15 @@
+import { CreateCakePanel } from "@/components/product/CreateCakePanel";
+import { AdSlot, BrandMark, GlassCard, MobileSheet, ProductContainer, ProductShell, ProgressBar } from "@/components/product/Primitives";
+import { PremiumRail } from "@/components/product/PremiumRail";
 import { logout, useAuthState } from "@/hooks/useAuth";
 import { useCakes, useCreateCake, useDeleteCake } from "@/hooks/useCakeLetterApi";
 import { parseBirthdayInputToIso, isValidCalendarDateYmd } from "@/lib/birthdayInput";
-import { FLAVOR_THEME } from "@/lib/onlydayTheme";
-import { useState } from "react";
-import { useLocation } from "wouter";
+import { FLAVOR_THEME, completionGoalCandleCount } from "@/lib/onlydayTheme";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "wouter";
 import type { Cake } from "@/types/api";
-import { Heart, LogOut, Sparkles, Trash2 } from "lucide-react";
+import { Copy, LogOut, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-
-const FLAVORS: Cake["flavor"][] = [
-  "STRAWBERRY",
-  "VANILLA",
-  "CHOCOLATE",
-  "MATCHA",
-  "MANGO",
-];
 
 export default function CakesPage() {
   const { isAuthenticated, user } = useAuthState();
@@ -23,8 +18,15 @@ export default function CakesPage() {
   const createCake = useCreateCake();
   const deleteCake = useDeleteCake();
   const [title, setTitle] = useState("내 생일 케이크");
-  const [flavor, setFlavor] = useState<Cake["flavor"]>("STRAWBERRY");
+  const [flavor, setFlavor] = useState<Cake["flavor"]>("VANILLA");
   const [birthdayRaw, setBirthdayRaw] = useState("");
+  const [createOpen, setCreateOpen] = useState(false);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login?next=/cakes");
+    }
+  }, [isAuthenticated, navigate]);
 
   const parsedBirthday = (() => {
     const iso = parseBirthdayInputToIso(birthdayRaw);
@@ -34,7 +36,14 @@ export default function CakesPage() {
 
   const create = async () => {
     if (!parsedBirthday) return;
-    await createCake.mutateAsync({ title, flavor, birthday: parsedBirthday });
+    try {
+      const cake = await createCake.mutateAsync({ title: title.trim() || "내 생일 케이크", flavor, birthday: parsedBirthday });
+      toast.success("케이크 링크가 만들어졌어요.");
+      setCreateOpen(false);
+      navigate(`/cake/${cake.shareToken}`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "케이크 생성에 실패했어요.");
+    }
   };
 
   const remove = async (cakeId: string, titleLabel: string) => {
@@ -53,164 +62,179 @@ export default function CakesPage() {
     }
   };
 
-  return (
-    <div className="relative min-h-dvh overflow-x-hidden bg-background">
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_90%_50%_at_50%_0%,oklch(0.94_0.02_285_/_0.18),transparent)]" />
+  const copyShare = async (shareToken: string) => {
+    const url = `${window.location.origin}/cake/${shareToken}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("공유 링크를 복사했어요.");
+    } catch {
+      toast.error("링크 복사에 실패했어요.");
+    }
+  };
 
-      <header className="border-b border-border/60 bg-card/95 px-4 py-5 shadow-[0_1px_0_rgba(45,55,72,0.04)] backdrop-blur-md">
-        <div className="mx-auto flex max-w-md items-center justify-between gap-4">
-          <div className="min-w-0 space-y-1">
-            <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground">only · day</p>
-            <h1 className="truncate font-serif text-lg font-semibold tracking-tight text-foreground">
-              안녕, {user?.displayName ?? "친구"}
-            </h1>
-          </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <button
-              type="button"
-              onClick={() => navigate("/saved-letters")}
-              className="rounded-full border border-border/70 bg-card px-3 py-2 text-xs font-medium text-foreground shadow-sm transition hover:border-ring/40 hover:bg-secondary/50"
-            >
-              보관함
-            </button>
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  return (
+    <ProductShell tone="mint">
+      <ProductContainer className="pb-6 pt-3 sm:pb-14 sm:pt-5">
+        <header className="flex items-center justify-between gap-3">
+          <BrandMark />
+          <div className="flex items-center gap-2">
+            <Link href="/saved-letters">
+              <span className="rounded-full bg-white/70 px-4 py-2 text-xs font-black text-slate-800 shadow-sm backdrop-blur">
+                보관함
+              </span>
+            </Link>
             <button
               type="button"
               onClick={() => logout()}
-              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              className="rounded-full bg-white/70 p-2.5 text-slate-600 shadow-sm backdrop-blur transition hover:bg-white hover:text-slate-950"
               title="로그아웃"
             >
               <LogOut className="h-4 w-4" />
             </button>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="mx-auto max-w-md space-y-10 px-4 py-10">
-        <div className="space-y-3 text-center">
-          <Sparkles className="mx-auto h-6 w-6 text-accent-pink" />
-          <h2 className="font-serif text-2xl font-bold tracking-tight text-foreground md:text-[1.75rem]">새 케이크 올리기</h2>
-          <p className="text-[13px] font-medium leading-relaxed text-muted-foreground">맛·날짜를 고르면 공유 링크가 생겨요.</p>
-        </div>
+        <main className="grid gap-4 pt-5 sm:gap-6 sm:pt-10 lg:grid-cols-[minmax(0,1fr)_380px]">
+          <section className="space-y-6">
+            <div className="space-y-2 sm:space-y-3">
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">creator dashboard</p>
+              <h1 className="max-w-3xl text-3xl font-black tracking-[-0.06em] text-slate-950 sm:text-5xl">
+                안녕, {user?.displayName ?? "친구"}.
+                <br />
+                올해 생일은 링크 하나로 모아봐요.
+              </h1>
+              <button
+                type="button"
+                onClick={() => setCreateOpen(true)}
+                className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-[0_18px_35px_-18px_rgba(15,23,42,0.8)] sm:hidden"
+              >
+                새 케이크 만들기
+              </button>
+            </div>
 
-        <div className="space-y-2">
-          <label className="text-[13px] font-medium text-muted-foreground">이름</label>
-          <input
-            className="w-full rounded-xl border-0 bg-muted/80 px-4 py-3 text-sm text-foreground outline-none ring-1 ring-transparent transition focus:bg-card focus:ring-2 focus:ring-ring/35"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            maxLength={100}
-          />
-        </div>
+            <div className="hidden sm:block">
+              <CreateCakePanel
+                title={title}
+                birthdayRaw={birthdayRaw}
+                flavor={flavor}
+                birthdayValid={Boolean(parsedBirthday)}
+                pending={createCake.isPending}
+                onTitleChange={setTitle}
+                onBirthdayChange={setBirthdayRaw}
+                onFlavorChange={setFlavor}
+                onSubmit={create}
+              />
+            </div>
 
-        <div>
-          <p className="text-[13px] font-medium text-muted-foreground">맛 · 미리보기</p>
-          <div
-            className="mt-4 flex gap-3 overflow-x-auto pb-2 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            style={{ WebkitOverflowScrolling: "touch" }}
-          >
-            {FLAVORS.map((f) => {
-              const th = FLAVOR_THEME[f];
-              const on = flavor === f;
-              return (
-                <button
-                  key={f}
-                  type="button"
-                  onClick={() => setFlavor(f)}
-                  className={`shrink-0 snap-center rounded-2xl border-2 bg-card p-0 text-left text-sm transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out ${
-                    on
-                      ? "z-[1] scale-[1.03] border-primary shadow-[0_12px_32px_-10px_rgba(45,55,72,0.22)]"
-                      : "border-transparent shadow-sm hover:-translate-y-1 hover:shadow-[0_10px_26px_-12px_rgba(45,55,72,0.14)]"
-                  }`}
-                >
-                  <div
-                    className="flex w-36 flex-col items-center justify-end overflow-hidden rounded-xl px-2 pb-2 pt-3"
-                    style={{
-                      background: `radial-gradient(circle at 30% 20%, ${th.hero[0]} 0%, transparent 50%),
-                        linear-gradient(160deg, ${th.hero[0]} 0%, ${th.hero[1]} 50%, ${th.hero[2]} 100%)`,
-                    }}
-                  >
-                    <span className="text-4xl drop-shadow">{th.emoji}</span>
-                    <div
-                      className="mt-2 w-full rounded-full py-1.5 text-center text-xs font-medium text-white/95 shadow-inner"
-                      style={{ backgroundColor: `${th.accent}cc` }}
-                    >
-                      {th.label}
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+            <GlassCard className="p-4 sm:p-6">
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">my cakes</p>
+                  <h2 className="mt-1 text-xl font-black tracking-[-0.04em] text-slate-950 sm:mt-2 sm:text-2xl">공유 중인 케이크</h2>
+                </div>
+                <span className="rounded-full bg-slate-950 px-3 py-1.5 text-xs font-black text-white">{cakes.length}</span>
+              </div>
 
-        <div>
-          <label className="text-[13px] font-medium text-muted-foreground">생일 (월·일, KST) — 20070123</label>
-          <input
-            className="mt-2 w-full rounded-xl border-0 bg-muted/80 px-4 py-3 text-sm text-foreground outline-none ring-1 ring-transparent transition focus:bg-card focus:ring-2 focus:ring-ring/35"
-            type="text"
-            inputMode="numeric"
-            placeholder="예) 20070123 또는 2007-01-23"
-            value={birthdayRaw}
-            onChange={(e) => setBirthdayRaw(e.target.value)}
-            autoComplete="bday"
-          />
-          {birthdayRaw && !parsedBirthday && (
-            <p className="mt-2 text-[10px] font-medium text-muted-foreground">8자리 숫자(YYYYMMDD) 형식이면 자동으로 나눠서 저장돼요.</p>
-          )}
-        </div>
+              {cakes.length === 0 ? (
+                <div className="mt-5 rounded-[1.5rem] border border-dashed border-slate-300 bg-white/55 p-6 text-center text-sm font-bold text-slate-500">
+                  아직 케이크가 없어요. 첫 케이크를 만들어 공유 흐름을 시작하세요.
+                </div>
+              ) : (
+                <ul className="mt-5 grid gap-3">
+                  {cakes.map((cake) => (
+                    <CakeListItem
+                      key={cake.cakeId}
+                      cake={cake}
+                      onOpen={() => navigate(`/cake/${cake.shareToken}`)}
+                      onCopy={() => copyShare(cake.shareToken)}
+                      onRemove={() => remove(cake.cakeId, cake.title)}
+                      removePending={deleteCake.isPending}
+                    />
+                  ))}
+                </ul>
+              )}
+            </GlassCard>
+          </section>
 
+          <aside className="hidden space-y-4 sm:block">
+            <PremiumRail />
+            <AdSlot />
+          </aside>
+        </main>
+      </ProductContainer>
+
+      <MobileSheet open={createOpen} title="새 케이크 만들기" onClose={() => setCreateOpen(false)}>
+        <CreateCakePanel
+          title={title}
+          birthdayRaw={birthdayRaw}
+          flavor={flavor}
+          birthdayValid={Boolean(parsedBirthday)}
+          pending={createCake.isPending}
+          onTitleChange={setTitle}
+          onBirthdayChange={setBirthdayRaw}
+          onFlavorChange={setFlavor}
+          onSubmit={create}
+        />
+      </MobileSheet>
+    </ProductShell>
+  );
+}
+
+function CakeListItem({
+  cake,
+  onOpen,
+  onCopy,
+  onRemove,
+  removePending,
+}: {
+  cake: Cake;
+  onOpen: () => void;
+  onCopy: () => void;
+  onRemove: () => void;
+  removePending: boolean;
+}) {
+  const theme = FLAVOR_THEME[cake.flavor];
+  const goal = completionGoalCandleCount([]);
+  return (
+    <li className="rounded-[1.3rem] border border-white/80 bg-white/65 p-3 shadow-sm sm:rounded-[1.5rem] sm:p-4">
+      <div className="flex items-center justify-between gap-4">
+        <button type="button" onClick={onOpen} className="min-w-0 flex-1 text-left">
+          <p className="truncate text-base font-black tracking-[-0.03em] text-slate-950 sm:text-lg">{cake.title}</p>
+          <p className="mt-1 text-xs font-bold text-slate-500">
+            {theme.label} · {cake.birthday} · {cake.candleCount}촛불
+          </p>
+        </button>
+        <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-2xl sm:h-14 sm:w-14 sm:text-3xl" style={{ backgroundColor: theme.hero[1] }}>
+          {theme.emoji}
+        </span>
+      </div>
+      <ProgressBar value={cake.candleCount} max={goal} label="공유 성장도" className="mt-3 sm:mt-4" />
+      <div className="mt-3 flex flex-wrap gap-2 sm:mt-4">
+        <button type="button" onClick={onOpen} className="rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white">
+          열기
+        </button>
         <button
           type="button"
-          onClick={create}
-          disabled={!parsedBirthday || createCake.isPending}
-          className="u-cta-primary flex w-full items-center justify-center gap-2 py-3.5 text-sm disabled:opacity-40"
+          onClick={onCopy}
+          className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-black text-slate-700"
         >
-          <Heart className="h-4 w-4" />
-          {createCake.isPending ? "만드는 중…" : "케이크 만들기"}
+          <Copy className="h-3.5 w-3.5" />
+          링크 복사
         </button>
-
-        <div>
-          <h3 className="mb-4 font-serif text-base font-bold tracking-tight text-foreground">내 케이크</h3>
-          {cakes.length === 0 ? (
-            <p className="text-center text-sm text-muted-foreground">아직 케이크가 없어요. 하나 만들어 볼까요?</p>
-          ) : (
-            <ul className="space-y-4">
-              {cakes.map((c) => (
-                <li
-                  key={c.cakeId}
-                  className="flex items-center justify-between gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-[0_4px_18px_-8px_rgba(45,55,72,0.08)] transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_24px_-8px_rgba(45,55,72,0.12)]"
-                >
-                  <div className="min-w-0 space-y-0.5">
-                    <p className="truncate font-medium text-foreground">{c.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {c.birthday} · {FLAVOR_THEME[c.flavor].label} · {c.candleCount}촛불
-                    </p>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => navigate(`/cake/${c.shareToken}`)}
-                      className="rounded-full border border-primary/20 bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground shadow-[0_3px_12px_-3px_rgba(45,55,72,0.35)] transition duration-200 ease-out hover:scale-[1.02] active:scale-[0.98]"
-                    >
-                      열기
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => remove(c.cakeId, c.title)}
-                      disabled={deleteCake.isPending}
-                      className="rounded-full p-2 text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive disabled:opacity-40"
-                      title="케이크 삭제"
-                      aria-label="케이크 삭제"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </main>
-    </div>
+        <button
+          type="button"
+          onClick={onRemove}
+          disabled={removePending}
+          className="ml-auto rounded-full p-2 text-slate-400 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-40"
+          aria-label="케이크 삭제"
+        >
+          <Trash2 className="h-4 w-4" />
+        </button>
+      </div>
+    </li>
   );
 }
