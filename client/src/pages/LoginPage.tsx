@@ -31,18 +31,18 @@ export default function LoginPage() {
     "";
 
   return (
-    <div className="relative min-h-dvh flex flex-col items-center justify-center p-4 bg-gradient-to-b from-pink-50/95 via-background to-violet-50/40">
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_100%_50%_at_50%_0%,rgba(253,186,200,0.45),transparent)]" />
-      <div className="w-full max-w-md space-y-5 rounded-[2rem] border border-white/50 bg-white/60 p-8 shadow-xl backdrop-blur-md">
-        <div className="text-center">
+    <div className="relative flex min-h-dvh flex-col items-center justify-center bg-background px-4 py-10">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_90%_55%_at_50%_-5%,oklch(0.93_0.025_285_/_0.22),transparent)]" />
+      <div className="w-full max-w-md space-y-8 rounded-2xl border border-border/70 bg-card p-8 shadow-[0_8px_30px_-12px_rgba(45,55,72,0.08)]">
+        <div className="space-y-2 text-center">
           <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-muted-foreground">only · day</p>
-          <h1 className="mt-2 font-serif text-2xl font-semibold text-rose-500/90">
+          <h1 className="font-serif text-2xl font-bold tracking-tight text-foreground md:text-[1.75rem]">
             {mode === "login" ? "다시 만나서 반가워요" : "하루를 함께 케이크에 담아요"}
           </h1>
         </div>
         <div className="space-y-3">
           <input
-            className="w-full rounded-2xl border border-white/50 bg-white/70 px-4 py-3 text-sm shadow-inner outline-none focus:ring-2 focus:ring-pink-200/80"
+            className="w-full rounded-xl border-0 bg-muted/80 px-4 py-3 text-sm text-foreground shadow-none outline-none ring-1 ring-transparent transition placeholder:text-muted-foreground/70 focus:bg-card focus:ring-2 focus:ring-ring/35"
             placeholder="이메일"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -50,14 +50,14 @@ export default function LoginPage() {
           />
           {mode === "signup" && (
             <input
-              className="w-full rounded-2xl border border-white/50 bg-white/70 px-4 py-3 text-sm shadow-inner outline-none focus:ring-2 focus:ring-pink-200/80"
+              className="w-full rounded-xl border-0 bg-muted/80 px-4 py-3 text-sm text-foreground shadow-none outline-none ring-1 ring-transparent transition placeholder:text-muted-foreground/70 focus:bg-card focus:ring-2 focus:ring-ring/35"
               placeholder="닉네임 (표시 이름)"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
             />
           )}
           <input
-            className="w-full rounded-2xl border border-white/50 bg-white/70 px-4 py-3 text-sm shadow-inner outline-none focus:ring-2 focus:ring-pink-200/80"
+            className="w-full rounded-xl border-0 bg-muted/80 px-4 py-3 text-sm text-foreground shadow-none outline-none ring-1 ring-transparent transition placeholder:text-muted-foreground/70 focus:bg-card focus:ring-2 focus:ring-ring/35"
             type="password"
             placeholder="비밀번호"
             value={password}
@@ -67,7 +67,7 @@ export default function LoginPage() {
         </div>
         <button
           type="button"
-          className="w-full rounded-full bg-gradient-to-r from-rose-400 to-fuchsia-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-pink-300/30 disabled:opacity-50"
+          className="u-cta-primary w-full py-3.5 text-sm disabled:opacity-50"
           onClick={submit}
           disabled={login.isPending || signup.isPending}
         >
@@ -75,12 +75,12 @@ export default function LoginPage() {
         </button>
         <button
           type="button"
-          className="w-full text-center text-xs text-muted-foreground underline"
+          className="w-full text-center text-xs font-medium text-muted-foreground underline-offset-4 transition hover:text-foreground hover:underline"
           onClick={() => setMode((v) => (v === "login" ? "signup" : "login"))}
         >
           {mode === "login" ? "계정이 없다면 가입" : "이미 계정이 있어요"}
         </button>
-        {message && <p className="text-center text-xs text-red-500/90">{message}</p>}
+        {message && <p className="text-center text-xs font-medium text-destructive">{message}</p>}
       </div>
     </div>
   );

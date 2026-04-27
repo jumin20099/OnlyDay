@@ -20,10 +20,10 @@ export function LeaveCandleForm({ shareToken, canSubmit, isOwner }: Props) {
 
   if (isOwner) {
     return (
-      <section className="mx-auto w-full max-w-md space-y-2 rounded-2xl border border-amber-200/40 bg-amber-50/30 px-4 py-3 text-center text-sm text-amber-900/80">
-        <p className="font-medium">이 케이크의 주인은 촛불을 남길 수 없어요</p>
-        <p className="text-xs text-amber-900/60">친구들만 마음을 올릴 수 있어요. 링크를 공유해 보세요.</p>
-        <p className="text-[10px] text-amber-900/50">로그인한 상태이면 케이크 주인 계정으로 쓰기는 막혀 있어요.</p>
+      <section className="mx-auto w-full max-w-md space-y-2 rounded-2xl border border-border/60 bg-accent px-4 py-4 text-center text-sm text-foreground/90 shadow-[0_4px_18px_-8px_rgba(45,55,72,0.06)]">
+        <p className="font-semibold tracking-tight">이 케이크의 주인은 촛불을 남길 수 없어요</p>
+        <p className="text-xs font-normal leading-relaxed text-muted-foreground">친구들만 마음을 올릴 수 있어요. 링크를 공유해 보세요.</p>
+        <p className="text-[10px] font-normal text-muted-foreground/90">로그인한 상태이면 케이크 주인 계정으로 쓰기는 막혀 있어요.</p>
       </section>
     );
   }
@@ -56,11 +56,11 @@ export function LeaveCandleForm({ shareToken, canSubmit, isOwner }: Props) {
   };
 
   return (
-    <section className="mx-auto w-full max-w-md space-y-3 px-4 pb-2">
-      <div>
+    <section className="mx-auto w-full max-w-md space-y-6 px-4 pb-8">
+      <div className="space-y-2">
         <p className="text-[9px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">leave a candle</p>
-        <h2 className="font-serif text-lg text-rose-400/90">촛불에 마음을 담아보세요</h2>
-        <p className="text-[11px] text-muted-foreground">닉네임·편지는 생일 케이크에만 켜져요. 로그인 없이도 남길 수 있어요.</p>
+        <h2 className="font-serif text-2xl font-bold tracking-tight text-foreground">촛불에 마음을 담아보세요</h2>
+        <p className="text-[13px] font-medium leading-relaxed text-muted-foreground">닉네임·편지는 생일 케이크에만 켜져요. 로그인 없이도 남길 수 있어요.</p>
       </div>
 
       <div
@@ -74,10 +74,10 @@ export function LeaveCandleForm({ shareToken, canSubmit, isOwner }: Props) {
               type="button"
               disabled={!canSubmit}
               onClick={() => setColor(s.color)}
-              className={`shrink-0 snap-start rounded-full border-2 px-2.5 py-1.5 text-xs font-medium transition-all ${
+              className={`shrink-0 snap-start rounded-full border-2 px-2.5 py-1.5 text-xs font-medium transition-[transform,box-shadow,border-color] duration-200 ease-out ${
                 color === s.color
-                  ? "border-rose-300 bg-white/80 shadow-md"
-                  : "border-transparent bg-white/40"
+                  ? "scale-[1.03] border-accent-pink bg-card shadow-[0_6px_18px_-6px_rgba(255,139,167,0.35)]"
+                  : "border-transparent bg-muted/80 shadow-sm hover:-translate-y-0.5 hover:shadow-[0_6px_16px_-8px_rgba(45,55,72,0.1)]"
               }`}
             >
               <span
@@ -91,9 +91,9 @@ export function LeaveCandleForm({ shareToken, canSubmit, isOwner }: Props) {
       </div>
 
       <div>
-        <label className="text-[11px] font-medium text-muted-foreground">닉네임</label>
+        <label className="text-[13px] font-medium text-muted-foreground">닉네임</label>
         <input
-          className="mt-0.5 w-full rounded-2xl border border-white/40 bg-white/60 px-3 py-2 text-sm shadow-inner outline-none placeholder:text-muted-foreground/60 focus:ring-2 focus:ring-pink-200/80"
+          className="mt-1 w-full rounded-xl border-0 bg-muted/80 px-3 py-2.5 text-sm text-foreground outline-none ring-1 ring-transparent transition placeholder:text-muted-foreground/60 focus:bg-card focus:ring-2 focus:ring-ring/35"
           placeholder="예) 오랜 친구"
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
@@ -102,9 +102,9 @@ export function LeaveCandleForm({ shareToken, canSubmit, isOwner }: Props) {
         />
       </div>
       <div>
-        <label className="text-[11px] font-medium text-muted-foreground">편지</label>
+        <label className="text-[13px] font-medium text-muted-foreground">편지</label>
         <textarea
-          className="mt-0.5 max-h-28 min-h-[80px] w-full resize-y rounded-2xl border border-white/40 bg-white/60 px-3 py-2 text-sm shadow-inner outline-none placeholder:text-muted-foreground/60 focus:ring-2 focus:ring-pink-200/80"
+          className="mt-1 max-h-28 min-h-[80px] w-full resize-y rounded-xl border-0 bg-muted/80 px-3 py-2.5 text-sm text-foreground outline-none ring-1 ring-transparent transition placeholder:text-muted-foreground/60 focus:bg-card focus:ring-2 focus:ring-ring/35"
           placeholder="따뜻한 한 마디를 남겨주세요."
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -119,7 +119,7 @@ export function LeaveCandleForm({ shareToken, canSubmit, isOwner }: Props) {
         type="button"
         disabled={!canSubmit || createLetter.isPending}
         onClick={submit}
-        className="w-full rounded-full bg-gradient-to-r from-rose-400 to-pink-500 py-2.5 text-sm font-semibold text-white shadow-lg shadow-rose-300/40 transition hover:opacity-95 disabled:opacity-40"
+        className="u-cta-primary w-full py-3 text-sm disabled:opacity-40"
       >
         {createLetter.isPending ? "보내는 중…" : "촛불 남기기"}
       </button>

@@ -33,22 +33,24 @@ export function CakeHero({
 
   return (
     <section
-      className="relative mx-auto flex w-full max-w-md flex-col items-center px-3 pb-1 pt-3"
+      className="relative mx-auto flex w-full max-w-md flex-col items-center px-4 pb-2 pt-6"
       style={{
         minHeight: "min(52dvh, 420px)",
       }}
     >
-      <p className="mb-0.5 text-[9px] font-medium uppercase tracking-[0.35em] text-muted-foreground">FOR</p>
+      <p className="mb-1 text-[9px] font-semibold uppercase tracking-[0.35em] text-muted-foreground">FOR</p>
       <h1
-        className="font-serif text-2xl font-semibold sm:text-3xl"
+        className="font-serif text-2xl font-semibold tracking-tight sm:text-3xl"
         style={{ color: t.accent }}
       >
         {cake.title}
       </h1>
-      <p className="mt-1 text-center text-[11px] text-muted-foreground">오늘은, 오직 당신만의 하루예요.</p>
+      <p className="mt-2 max-w-[18rem] text-center text-[11px] font-normal leading-relaxed text-muted-foreground">
+        오늘은, 오직 당신만의 하루예요.
+      </p>
 
       <div
-        className="relative z-0 mt-4 aspect-square w-full max-w-[min(100%,300px)] overflow-hidden rounded-full shadow-[0_8px_40px_-12px_rgba(244,114,182,0.45)]"
+        className="relative z-0 mt-6 aspect-square w-full max-w-[min(100%,300px)] overflow-hidden rounded-full shadow-md ring-1 ring-border/30"
         style={{
           background: `radial-gradient(circle at 30% 20%, ${t.hero[0]} 0%, transparent 45%),
             radial-gradient(circle at 70% 80%, ${t.hero[1]} 0%, transparent 50%),
@@ -79,10 +81,10 @@ export function CakeHero({
             <img
               src={cake.cakeImageUrl}
               alt={cake.title}
-              className="h-[78%] w-[78%] rounded-full object-cover shadow-inner ring-4 ring-white/30"
+              className="h-[78%] w-[78%] rounded-full object-cover shadow-sm ring-2 ring-white/40"
             />
           ) : (
-            <div className="relative flex h-[72%] w-[72%] flex-col items-center justify-end rounded-full bg-gradient-to-b from-white/50 to-white/20 pb-[18%] text-7xl shadow-inner ring-4 ring-white/25 backdrop-blur-[2px] sm:text-8xl">
+            <div className="relative flex h-[72%] w-[72%] flex-col items-center justify-end rounded-full bg-gradient-to-b from-white/50 to-white/20 pb-[18%] text-7xl shadow-inner ring-2 ring-white/35 backdrop-blur-[2px] sm:text-8xl">
               <span className="drop-shadow-md">{t.emoji}</span>
               {unlockBits.golden && (
                 <div className="absolute inset-0 rounded-full bg-gradient-to-t from-amber-200/25 to-transparent" />
@@ -92,7 +94,7 @@ export function CakeHero({
         </div>
 
         {!unlockBits.golden && (
-          <div className="pointer-events-none absolute bottom-[12%] right-[10%] flex items-center gap-1 rounded-full bg-white/30 px-2 py-0.5 text-[10px] text-foreground/60 backdrop-blur-sm">
+          <div className="pointer-events-none absolute bottom-[12%] right-[10%] flex items-center gap-1 rounded-full bg-card/75 px-2.5 py-1 text-[10px] font-medium text-muted-foreground shadow-sm ring-1 ring-border/40 backdrop-blur-sm">
             <Lock className="h-3 w-3" />
             <span>30촛불 시 골든 레이어</span>
           </div>

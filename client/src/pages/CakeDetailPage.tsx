@@ -150,7 +150,7 @@ export default function CakeDetailPage() {
 
   if (isLoading || !cake) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-gradient-to-b from-pink-50/90 via-background to-violet-50/40 text-sm text-muted-foreground">
+      <div className="flex min-h-dvh items-center justify-center bg-background px-4 text-sm text-muted-foreground">
         케이크를 불러오는 중…
       </div>
     );
@@ -165,21 +165,21 @@ export default function CakeDetailPage() {
         background: `linear-gradient(180deg, ${theme.hero[0]} 0%, var(--background) 38%, ${theme.hero[2]} 100%)`,
       }}
     >
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(255,192,203,0.45),transparent)]" />
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_85%_45%_at_50%_-8%,oklch(0.94_0.02_285_/_0.16),transparent)]" />
 
-      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-white/20 bg-background/35 px-2 py-1.5 backdrop-blur-md">
+      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border/40 bg-card/70 px-3 py-2 backdrop-blur-md">
         <Link href="/">
-          <span className="inline-flex items-center gap-0.5 text-xs font-medium text-foreground/80">
+          <span className="inline-flex items-center gap-0.5 rounded-full px-1 py-0.5 text-xs font-medium text-muted-foreground transition hover:bg-muted/80 hover:text-foreground">
             <ChevronLeft className="h-4 w-4" />
             홈
           </span>
         </Link>
-        <span className="font-serif text-xs font-semibold tracking-widest text-foreground/90">ONLY · DAY</span>
-        <div className="flex items-center gap-0.5">
+        <span className="font-serif text-[10px] font-semibold tracking-[0.25em] text-foreground/80">ONLY · DAY</span>
+        <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={copyLink}
-            className="inline-flex items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] font-medium text-foreground/85"
+            className="inline-flex items-center gap-0.5 rounded-full px-2.5 py-1 text-[10px] font-medium text-muted-foreground transition hover:bg-muted/90 hover:text-foreground"
             title="링크 복사"
           >
             <Link2 className="h-3.5 w-3.5" />
@@ -188,14 +188,14 @@ export default function CakeDetailPage() {
           <button
             type="button"
             onClick={shareLink}
-            className="inline-flex items-center gap-0.5 rounded-lg px-2 py-1 text-[10px] font-medium text-foreground/85"
+            className="inline-flex items-center gap-0.5 rounded-full px-2.5 py-1 text-[10px] font-medium text-muted-foreground transition hover:bg-muted/90 hover:text-foreground"
             title="시스템 공유"
           >
             공유
           </button>
           <Link
             href={`/cake/${shareToken}/result`}
-            className="inline-flex items-center gap-0.5 text-[10px] font-medium text-muted-foreground"
+            className="inline-flex items-center gap-0.5 rounded-full px-2 py-1 text-[10px] font-medium text-muted-foreground transition hover:bg-muted/90 hover:text-foreground"
           >
             <ImageIcon className="h-3.5 w-3.5" />
             이미지

@@ -54,27 +54,29 @@ export default function CakesPage() {
   };
 
   return (
-    <div className="relative min-h-dvh overflow-x-hidden bg-gradient-to-b from-pink-50/90 via-background to-violet-50/50">
-      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_100%_60%_at_50%_0%,rgba(253,186,200,0.5),transparent)]" />
+    <div className="relative min-h-dvh overflow-x-hidden bg-background">
+      <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_90%_50%_at_50%_0%,oklch(0.94_0.02_285_/_0.18),transparent)]" />
 
-      <header className="border-b border-white/30 bg-background/25 px-4 py-4 backdrop-blur-md">
-        <div className="mx-auto flex max-w-md items-center justify-between">
-          <div>
+      <header className="border-b border-border/60 bg-card/95 px-4 py-5 shadow-[0_1px_0_rgba(45,55,72,0.04)] backdrop-blur-md">
+        <div className="mx-auto flex max-w-md items-center justify-between gap-4">
+          <div className="min-w-0 space-y-1">
             <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground">only · day</p>
-            <h1 className="font-serif text-lg font-semibold">안녕, {user?.displayName ?? "친구"}</h1>
+            <h1 className="truncate font-serif text-lg font-semibold tracking-tight text-foreground">
+              안녕, {user?.displayName ?? "친구"}
+            </h1>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
               onClick={() => navigate("/saved-letters")}
-              className="rounded-full border border-white/50 bg-white/50 px-3 py-1.5 text-xs font-medium text-foreground/90"
+              className="rounded-full border border-border/70 bg-card px-3 py-2 text-xs font-medium text-foreground shadow-sm transition hover:border-ring/40 hover:bg-secondary/50"
             >
               보관함
             </button>
             <button
               type="button"
               onClick={() => logout()}
-              className="rounded-full p-2 text-muted-foreground"
+              className="rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
               title="로그아웃"
             >
               <LogOut className="h-4 w-4" />
@@ -83,17 +85,17 @@ export default function CakesPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-md space-y-8 px-4 py-6">
-        <div className="text-center">
-          <Sparkles className="mx-auto h-5 w-5 text-pink-300" />
-          <h2 className="mt-2 font-serif text-xl text-rose-400/90">새 케이크 올리기</h2>
-          <p className="text-xs text-muted-foreground">맛·날짜를 고르면 공유 링크가 생겨요. 좌우로 훑어 맛을 골라 보세요.</p>
+      <main className="mx-auto max-w-md space-y-10 px-4 py-10">
+        <div className="space-y-3 text-center">
+          <Sparkles className="mx-auto h-6 w-6 text-accent-pink" />
+          <h2 className="font-serif text-2xl font-bold tracking-tight text-foreground md:text-[1.75rem]">새 케이크 올리기</h2>
+          <p className="text-[13px] font-medium leading-relaxed text-muted-foreground">맛·날짜를 고르면 공유 링크가 생겨요.</p>
         </div>
 
-        <div className="space-y-3">
-          <label className="text-xs font-medium text-muted-foreground">이름</label>
+        <div className="space-y-2">
+          <label className="text-[13px] font-medium text-muted-foreground">이름</label>
           <input
-            className="w-full rounded-2xl border border-white/40 bg-white/60 px-4 py-3 text-sm shadow-inner outline-none focus:ring-2 focus:ring-pink-200/80"
+            className="w-full rounded-xl border-0 bg-muted/80 px-4 py-3 text-sm text-foreground outline-none ring-1 ring-transparent transition focus:bg-card focus:ring-2 focus:ring-ring/35"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             maxLength={100}
@@ -101,9 +103,9 @@ export default function CakesPage() {
         </div>
 
         <div>
-          <p className="text-xs font-medium text-muted-foreground">맛 (가로로 스와이프) · 미리보기</p>
+          <p className="text-[13px] font-medium text-muted-foreground">맛 · 미리보기</p>
           <div
-            className="mt-2 flex gap-3 overflow-x-auto pb-2 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            className="mt-4 flex gap-3 overflow-x-auto pb-2 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             style={{ WebkitOverflowScrolling: "touch" }}
           >
             {FLAVORS.map((f) => {
@@ -114,10 +116,10 @@ export default function CakesPage() {
                   key={f}
                   type="button"
                   onClick={() => setFlavor(f)}
-                  className={`shrink-0 snap-center rounded-2xl border-2 p-0 text-left text-sm transition ${
+                  className={`shrink-0 snap-center rounded-2xl border-2 bg-card p-0 text-left text-sm transition-[transform,box-shadow,border-color,background-color] duration-200 ease-out ${
                     on
-                      ? "border-pink-300 bg-white/90 shadow-md"
-                      : "border-transparent bg-white/40"
+                      ? "z-[1] scale-[1.03] border-primary shadow-[0_12px_32px_-10px_rgba(45,55,72,0.22)]"
+                      : "border-transparent shadow-sm hover:-translate-y-1 hover:shadow-[0_10px_26px_-12px_rgba(45,55,72,0.14)]"
                   }`}
                 >
                   <div
@@ -142,9 +144,9 @@ export default function CakesPage() {
         </div>
 
         <div>
-          <label className="text-xs font-medium text-muted-foreground">생일 (월·일, KST) — 20070123</label>
+          <label className="text-[13px] font-medium text-muted-foreground">생일 (월·일, KST) — 20070123</label>
           <input
-            className="mt-2 w-full rounded-2xl border border-white/40 bg-white/60 px-4 py-3 text-sm shadow-inner"
+            className="mt-2 w-full rounded-xl border-0 bg-muted/80 px-4 py-3 text-sm text-foreground outline-none ring-1 ring-transparent transition focus:bg-card focus:ring-2 focus:ring-ring/35"
             type="text"
             inputMode="numeric"
             placeholder="예) 20070123 또는 2007-01-23"
@@ -153,7 +155,7 @@ export default function CakesPage() {
             autoComplete="bday"
           />
           {birthdayRaw && !parsedBirthday && (
-            <p className="mt-1 text-[10px] text-amber-700/90">8자리 숫자(YYYYMMDD) 형식이면 자동으로 나눠서 저장돼요.</p>
+            <p className="mt-2 text-[10px] font-medium text-muted-foreground">8자리 숫자(YYYYMMDD) 형식이면 자동으로 나눠서 저장돼요.</p>
           )}
         </div>
 
@@ -161,25 +163,25 @@ export default function CakesPage() {
           type="button"
           onClick={create}
           disabled={!parsedBirthday || createCake.isPending}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-rose-400 to-fuchsia-500 py-3.5 text-sm font-semibold text-white shadow-lg shadow-pink-300/30 disabled:opacity-40"
+          className="u-cta-primary flex w-full items-center justify-center gap-2 py-3.5 text-sm disabled:opacity-40"
         >
           <Heart className="h-4 w-4" />
           {createCake.isPending ? "만드는 중…" : "케이크 만들기"}
         </button>
 
         <div>
-          <h3 className="mb-2 font-serif text-sm font-semibold text-foreground/80">내 케이크</h3>
+          <h3 className="mb-4 font-serif text-base font-bold tracking-tight text-foreground">내 케이크</h3>
           {cakes.length === 0 ? (
             <p className="text-center text-sm text-muted-foreground">아직 케이크가 없어요. 하나 만들어 볼까요?</p>
           ) : (
-            <ul className="space-y-2">
+            <ul className="space-y-4">
               {cakes.map((c) => (
                 <li
                   key={c.cakeId}
-                  className="flex items-center justify-between gap-2 rounded-2xl border border-white/40 bg-white/50 p-3 backdrop-blur-sm"
+                  className="flex items-center justify-between gap-3 rounded-2xl border border-border/60 bg-card p-4 shadow-[0_4px_18px_-8px_rgba(45,55,72,0.08)] transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_8px_24px_-8px_rgba(45,55,72,0.12)]"
                 >
-                  <div>
-                    <p className="font-medium">{c.title}</p>
+                  <div className="min-w-0 space-y-0.5">
+                    <p className="truncate font-medium text-foreground">{c.title}</p>
                     <p className="text-xs text-muted-foreground">
                       {c.birthday} · {FLAVOR_THEME[c.flavor].label} · {c.candleCount}촛불
                     </p>
@@ -188,7 +190,7 @@ export default function CakesPage() {
                     <button
                       type="button"
                       onClick={() => navigate(`/cake/${c.shareToken}`)}
-                      className="rounded-full bg-foreground/5 px-3 py-1.5 text-xs font-medium"
+                      className="rounded-full border border-primary/20 bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground shadow-[0_3px_12px_-3px_rgba(45,55,72,0.35)] transition duration-200 ease-out hover:scale-[1.02] active:scale-[0.98]"
                     >
                       열기
                     </button>
@@ -196,7 +198,7 @@ export default function CakesPage() {
                       type="button"
                       onClick={() => remove(c.cakeId, c.title)}
                       disabled={deleteCake.isPending}
-                      className="rounded-full p-2 text-muted-foreground transition hover:bg-red-500/10 hover:text-red-600 disabled:opacity-40"
+                      className="rounded-full p-2 text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive disabled:opacity-40"
                       title="케이크 삭제"
                       aria-label="케이크 삭제"
                     >
