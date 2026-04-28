@@ -1,6 +1,7 @@
 import type { Cake } from "@/types/api";
 import { FLAVOR_THEME } from "@/lib/onlydayTheme";
 import { GlassCard, PrimaryCTA } from "./Primitives";
+import { Cake as CakePreview, apiFlavorToCakeFlavor } from "@/components/cake";
 import { CalendarDays, Sparkles } from "lucide-react";
 
 export const PRODUCT_FLAVORS: Cake["flavor"][] = ["VANILLA", "MATCHA", "CHOCOLATE", "MANGO", "STRAWBERRY"];
@@ -28,6 +29,8 @@ export function CreateCakePanel({
   onFlavorChange,
   onSubmit,
 }: Props) {
+  const selectedTheme = FLAVOR_THEME[flavor];
+
   return (
     <GlassCard className="p-4 sm:p-6">
       <div className="flex items-start justify-between gap-3 sm:gap-4">
@@ -41,6 +44,36 @@ export function CreateCakePanel({
         <span className="rounded-full bg-slate-950 p-2.5 text-white shadow-lg sm:p-3">
           <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
         </span>
+      </div>
+
+      <div
+        className="mt-4 overflow-hidden rounded-[1.35rem] border border-white/70 p-3 shadow-inner sm:mt-5 sm:rounded-[1.6rem]"
+        style={{
+          background: `radial-gradient(circle at 24% 8%, ${selectedTheme.hero[0]} 0%, transparent 42%),
+            radial-gradient(circle at 82% 4%, #dbeafe 0%, transparent 34%),
+            linear-gradient(155deg, ${selectedTheme.hero[0]} 0%, ${selectedTheme.hero[1]} 54%, ${selectedTheme.hero[2]} 100%)`,
+        }}
+      >
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500/80">preview</p>
+            <p className="mt-0.5 truncate text-sm font-black text-slate-950">{selectedTheme.label} 케이크</p>
+          </div>
+          <span className="rounded-full bg-white/70 px-2.5 py-1 text-[10px] font-black text-slate-600 shadow-sm">
+            디자인 미리보기
+          </span>
+        </div>
+        <div className="mx-auto mt-1 aspect-[4/3] max-h-44 max-w-[15rem] sm:max-h-52">
+          <CakePreview
+            flavor={apiFlavorToCakeFlavor(flavor)}
+            candleCount={7}
+            candleColors={["yellow", "pink", "lime", "blue"]}
+            unlocked
+            progressGoal={12}
+            premiumGlow
+            aria-label={`${selectedTheme.label} 케이크 디자인 미리보기`}
+          />
+        </div>
       </div>
 
       <div className="mt-4 grid gap-3 sm:mt-6 sm:gap-4">

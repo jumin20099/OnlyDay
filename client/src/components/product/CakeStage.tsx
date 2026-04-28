@@ -2,6 +2,7 @@ import type { Cake, Candle, UnlockState } from "@/types/api";
 import { FLAVOR_THEME, completionGoalCandleCount, UNLOCK_LABELS } from "@/lib/onlydayTheme";
 import { GlassCard, ProgressBar } from "./Primitives";
 import { Flame, Lock, Sparkles } from "lucide-react";
+import { Cake as SvgCake, apiCandlesToCandleColors, apiFlavorToCakeFlavor } from "@/components/cake";
 
 type Props = {
   cake: Cake;
@@ -15,6 +16,10 @@ export function CakeStage({ cake, candles, unlockStates, caption, compact = fals
   const theme = FLAVOR_THEME[cake.flavor];
   const goal = completionGoalCandleCount(unlockStates);
   const nextUnlock = unlockStates.find((u) => !u.unlocked);
+  const visualUnlocked = cake.candleCount > 0 || unlockStates.some((u) => u.unlocked);
+  const cakeFlavor = apiFlavorToCakeFlavor(cake.flavor);
+  const candleColors = apiCandlesToCandleColors(candles);
+  const progressPct = Math.min(1, cake.candleCount / Math.max(goal, 1));
 
   return (
     <GlassCard className={`overflow-hidden ${compact ? "p-2" : "p-3 sm:p-4"}`}>
@@ -37,38 +42,31 @@ export function CakeStage({ cake, candles, unlockStates, caption, compact = fals
           </span>
         </div>
 
-        <div className={`relative mx-auto grid aspect-square place-items-center ${compact ? "mt-3 max-w-[min(68dvh,280px)]" : "mt-5 max-w-[330px] sm:mt-7 sm:max-w-[360px]"}`}>
-          <div className="absolute inset-0 rounded-full bg-white/35 blur-2xl" />
-          <div className="relative grid h-[78%] w-[78%] place-items-center rounded-full bg-white/55 shadow-inner ring-1 ring-white/60 backdrop-blur">
-            {cake.cakeImageUrl ? (
-              <img src={cake.cakeImageUrl} alt={cake.title} className="h-[86%] w-[86%] rounded-full object-cover" />
-            ) : (
-              <span className={`${compact ? "text-7xl" : "text-7xl sm:text-8xl"} drop-shadow-sm`}>{theme.emoji}</span>
-            )}
-          </div>
-          {candles.slice(0, compact ? 28 : 36).map((c, index) => (
-            <span
-              key={c.candleId}
-              className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
-              style={{
-                left: `${c.positionX * 100}%`,
-                top: `${c.positionY * 100}%`,
-              }}
-              title={c.nickname}
-            >
-              <span
-                className={`${compact ? "h-2.5 w-2.5" : "h-3 w-3"} rounded-full`}
-                style={{
-                  background: `radial-gradient(circle, #fff7b2 0%, ${c.candleColor} 58%, transparent 72%)`,
-                  boxShadow: `0 0 ${10 + (index % 4) * 3}px ${c.candleColor}`,
-                }}
-              />
-              <span className={`${compact ? "mt-0.5 h-3 w-1" : "mt-1 h-4 w-1.5"} rounded-full`} style={{ backgroundColor: c.candleColor }} />
-            </span>
-          ))}
+        <div className={`relative mx-auto grid aspect-square place-items-center ${compact ? "mt-2 max-w-[min(62dvh,280px)]" : "mt-4 max-w-[330px] sm:mt-6 sm:max-w-[360px]"}`}>
+          <div
+            className="pointer-events-none absolute inset-[12%] rounded-full blur-3xl transition-opacity duration-700"
+            style={{
+              background: `radial-gradient(circle, ${theme.accent} 0%, transparent 66%)`,
+              opacity: 0.14 + progressPct * 0.26,
+            }}
+          />
+          <SvgCake
+            flavor={cakeFlavor}
+            candleCount={cake.candleCount}
+            candleColors={candleColors}
+            unlocked={visualUnlocked}
+            progressGoal={goal}
+            premiumGlow={unlockStates.some((u) => u.unlocked) || progressPct >= 0.7}
+            aria-label={`${theme.label} 케이크, 촛불 ${cake.candleCount}개`}
+          />
         </div>
 
-        <div className={`rounded-[1.2rem] bg-white/60 backdrop-blur sm:rounded-[1.5rem] ${compact ? "mt-3 p-3" : "mt-5 p-4"}`}>
+        <div
+          className={`rounded-[1.2rem] bg-white/60 backdrop-blur transition-shadow duration-700 sm:rounded-[1.5rem] ${compact ? "mt-3 p-3" : "mt-5 p-4"}`}
+          style={{
+            boxShadow: `inset 0 1px 0 rgba(255,255,255,0.55), 0 0 ${8 + progressPct * 22}px ${theme.accent}33`,
+          }}
+        >
           <ProgressBar value={cake.candleCount} max={goal} label="케이크 성장도" />
           <div className={`${compact ? "mt-2 hidden sm:flex" : "mt-4 flex"} flex-wrap gap-2`}>
             {unlockStates.map((state) => (
