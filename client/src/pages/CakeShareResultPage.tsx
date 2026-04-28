@@ -35,7 +35,7 @@ export default function CakeShareResultPage() {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: cake?.title ?? "Only Day",
+          title: cake?.title ?? "단하루",
           text: "여기에 촛불 하나 남겨줘",
           url: pageUrl,
         });
@@ -58,7 +58,7 @@ export default function CakeShareResultPage() {
       });
       const a = document.createElement("a");
       a.href = canvas.toDataURL("image/png");
-      a.download = "onlyday-cake.png";
+      a.download = "단하루-케이크.png";
       a.click();
     } finally {
       setExporting(false);
@@ -108,7 +108,7 @@ export default function CakeShareResultPage() {
               }}
             >
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">only · day</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">단 · 하루</p>
                 <h1 className="mt-2 text-4xl font-black tracking-[-0.06em]" style={{ color: t.accent }}>
                   {cake.title}
                 </h1>
@@ -134,7 +134,7 @@ export default function CakeShareResultPage() {
                     {candles.length > 10 ? "..." : ""}
                   </p>
                 ) : null}
-                <p className="mt-4 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">#onlyday</p>
+                <p className="mt-4 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">#단하루</p>
               </div>
             </div>
           </div>

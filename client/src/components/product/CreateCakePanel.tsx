@@ -52,7 +52,7 @@ export function CreateCakePanel({
             이름과 날짜만 적으면, 바로 초대 링크가 생겨요.
           </p>
         </div>
-        <span className="rounded-full bg-slate-950 p-2.5 text-white shadow-lg sm:p-3">
+        <span className="rounded-full bg-primary p-2.5 text-white shadow-lg sm:p-3">
           <Sparkles className="h-4 w-4 sm:h-5 sm:w-5" />
         </span>
       </div>

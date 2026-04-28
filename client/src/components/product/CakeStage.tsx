@@ -74,7 +74,7 @@ export function CakeStage({ cake, candles, unlockStates, caption, compact = fals
               <span
                 key={state.featureKey}
                 className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[11px] font-black ${
-                  state.unlocked ? "bg-slate-950 text-white" : "bg-white/70 text-slate-500"
+                  state.unlocked ? "bg-primary text-white" : "bg-white/70 text-slate-500"
                 }`}
               >
                 {state.unlocked ? <Sparkles className="h-3 w-3" /> : <Lock className="h-3 w-3" />}
@@ -90,7 +90,7 @@ export function CakeStage({ cake, candles, unlockStates, caption, compact = fals
           </p>
         </div>
 
-        <div className={`${compact ? "hidden" : "hidden sm:block"} pointer-events-none absolute right-5 top-24 rounded-full bg-slate-950/85 px-3 py-2 text-xs font-black text-white shadow-lg`}>
+        <div className={`${compact ? "hidden" : "hidden sm:block"} pointer-events-none absolute right-5 top-24 rounded-full bg-primary/85 px-3 py-2 text-xs font-black text-white shadow-lg`}>
           <Flame className="mr-1 inline h-3.5 w-3.5 text-amber-300" />
           마음이 모이는 중
         </div>

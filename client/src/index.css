@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
 
 @custom-variant dark (&:is(.dark *));
 
@@ -47,60 +48,73 @@
 }
 
 :root {
-  /* 프로덕션 팔레트: 중립 primary, 웜 베이스, 액센트는 핑크/피치/라벤더만 소량 */
-  --primary: #2d3748;
+  /* Brand palette */
+  --color-primary: #b68fdb;
+  --color-primary-hover: #a178cc;
+  --color-primary-active: #8d5fc0;
+  --color-bg-main: #faf7fd;
+  --color-bg-sub: #f3ecf9;
+  --color-text-main: #2d2a32;
+  --color-text-sub: #6e6a75;
+  --color-accent-warm: #f4a261;
+  --color-accent-soft: #ffcad4;
+  --color-border: #e5dff0;
+  --color-shadow: rgba(0, 0, 0, 0.08);
+
+  /* App theme tokens */
+  --primary: #b68fdb;
   --primary-foreground: #ffffff;
-  --sidebar-primary: #2d3748;
+  --sidebar-primary: #b68fdb;
   --sidebar-primary-foreground: #ffffff;
-  --chart-1: #4a5568;
+  --chart-1: #b68fdb;
   --chart-2: #718096;
   --chart-3: #a0aec0;
   --chart-4: #cbd5e0;
   --chart-5: #e2e8f0;
   --radius: 1rem;
 
-  --background: #f8f7f5;
-  --foreground: #1a202c;
+  --background: #faf7fd;
+  --foreground: #2d2a32;
   --card: #ffffff;
-  --card-foreground: #1a202c;
+  --card-foreground: #2d2a32;
   --popover: #ffffff;
-  --popover-foreground: #1a202c;
+  --popover-foreground: #2d2a32;
 
-  --secondary: #f0eeeb;
-  --secondary-foreground: #1a202c;
+  --secondary: #f3ecf9;
+  --secondary-foreground: #2d2a32;
 
-  --muted: #edecea;
-  --muted-foreground: #718096;
+  --muted: #f3ecf9;
+  --muted-foreground: #6e6a75;
 
-  --accent: #fff7f0;
-  --accent-foreground: #1a202c;
+  --accent: #ffcad4;
+  --accent-foreground: #2d2a32;
 
   --destructive: #c53030;
   --destructive-foreground: #ffffff;
 
-  --border: #e2e8f0;
-  --input: #edecea;
+  --border: #e5dff0;
+  --input: #f3ecf9;
   --ring: #b8c0ff;
 
-  --sidebar: #f8f7f5;
-  --sidebar-foreground: #1a202c;
-  --sidebar-accent: #f0eeeb;
-  --sidebar-accent-foreground: #1a202c;
-  --sidebar-border: #e2e8f0;
+  --sidebar: #faf7fd;
+  --sidebar-foreground: #2d2a32;
+  --sidebar-accent: #f3ecf9;
+  --sidebar-accent-foreground: #2d2a32;
+  --sidebar-border: #e5dff0;
   --sidebar-ring: #b8c0ff;
 
   --accent-pink: #ff8ba7;
-  --accent-peach: #ffd6a5;
+  --accent-peach: #f4a261;
   --accent-lavender: #b8c0ff;
 
-  --shadow-cta: 0 4px 18px -2px rgb(45 55 72 / 38%);
+  --shadow-cta: 0 4px 18px -2px rgba(0, 0, 0, 0.18);
 }
 
 .dark {
-  --primary: #e2e8f0;
-  --primary-foreground: #1a202c;
-  --sidebar-primary: #e2e8f0;
-  --sidebar-primary-foreground: #1a202c;
+  --primary: #b68fdb;
+  --primary-foreground: #ffffff;
+  --sidebar-primary: #b68fdb;
+  --sidebar-primary-foreground: #ffffff;
   --background: #1a202c;
   --foreground: #f7fafc;
   --card: #2d3748;
@@ -139,17 +153,11 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html, body, button, input, textarea, select {
+    font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Noto Serif KR', serif;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Noto Serif KR', serif;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
-  p, span, div {
-    font-family: 'Noto Sans KR', sans-serif;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -355,5 +363,28 @@
   }
   .u-cta-primary:active:not(:disabled) {
     transform: scale(0.98);
+  }
+
+  .u-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full font-black transition;
+  }
+
+  .u-btn-primary {
+    @apply bg-primary text-white;
+    box-shadow: var(--shadow-cta);
+  }
+  .u-btn-primary:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+  }
+  .u-btn-primary:active:not(:disabled) {
+    background: var(--color-primary-active);
+  }
+
+  .u-btn-secondary {
+    @apply border bg-white/70 text-slate-800 shadow-sm backdrop-blur;
+    border-color: var(--color-border);
+  }
+  .u-btn-secondary:hover:not(:disabled) {
+    @apply bg-white;
   }
 }

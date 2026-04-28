@@ -83,7 +83,7 @@ export default function CakesPage() {
           <BrandMark />
           <div className="flex items-center gap-2">
             <Link href="/saved-letters">
-              <span className="rounded-full bg-white/70 px-4 py-2 text-xs font-black text-slate-800 shadow-sm backdrop-blur">
+              <span className="u-btn u-btn-secondary px-4 py-2 text-xs">
                 보관함
               </span>
             </Link>
@@ -110,7 +110,7 @@ export default function CakesPage() {
               <button
                 type="button"
                 onClick={() => setCreateOpen(true)}
-                className="mt-2 inline-flex w-full items-center justify-center rounded-full bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-[0_18px_35px_-18px_rgba(15,23,42,0.8)] sm:hidden"
+                className="u-btn u-btn-primary mt-2 w-full px-5 py-3 text-sm sm:hidden"
               >
                 새 케이크 만들기
               </button>
@@ -136,7 +136,7 @@ export default function CakesPage() {
                   <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">케이크 목록</p>
                   <h2 className="mt-1 text-xl font-black tracking-[-0.04em] text-slate-950 sm:mt-2 sm:text-2xl">내 케이크 목록</h2>
                 </div>
-                <span className="rounded-full bg-slate-950 px-3 py-1.5 text-xs font-black text-white">{cakes.length}</span>
+                <span className="rounded-full bg-primary px-3 py-1.5 text-xs font-black text-white">{cakes.length}</span>
               </div>
 
               {cakes.length === 0 ? (
@@ -214,7 +214,7 @@ function CakeListItem({
       </div>
       <ProgressBar value={cake.candleCount} max={goal} label="촛불 개수" className="mt-3 sm:mt-4" />
       <div className="mt-3 flex flex-wrap gap-2 sm:mt-4">
-        <button type="button" onClick={onOpen} className="rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white">
+        <button type="button" onClick={onOpen} className="u-btn u-btn-primary px-4 py-2 text-xs">
           보러 가기
         </button>
         <button

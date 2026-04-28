@@ -49,7 +49,7 @@ export default function LandingPage() {
               </p>
             </div>
             <Link href={isAuthenticated ? "/cakes" : "/login?next=/cakes"}>
-              <span className="inline-flex items-center justify-center rounded-full bg-slate-950 px-5 py-3 text-sm font-black text-white">
+              <span className="u-btn u-btn-primary px-5 py-3 text-sm">
                 지금 시작하기
               </span>
             </Link>
@@ -68,7 +68,7 @@ export default function LandingPage() {
 function FlowCard({ icon, title, body }: { icon: ReactNode; title: string; body: string }) {
   return (
     <GlassCard className="p-5">
-      <div className="mb-5 inline-flex rounded-full bg-slate-950 p-3 text-white shadow-lg">
+      <div className="mb-5 inline-flex rounded-full bg-primary p-3 text-white shadow-lg">
         {icon}
       </div>
       <h3 className="text-lg font-black tracking-[-0.03em] text-slate-950">{title}</h3>

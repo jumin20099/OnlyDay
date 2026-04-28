@@ -107,7 +107,7 @@ export default function LoginPage() {
 
             <button
               type="button"
-              className="mt-6 w-full rounded-full bg-slate-950 px-5 py-3.5 text-sm font-black text-white shadow-[0_18px_35px_-18px_rgba(15,23,42,0.8)] transition hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-50"
+              className="u-btn u-btn-primary mt-6 w-full px-5 py-3.5 text-sm hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-50"
               onClick={submit}
               disabled={login.isPending || signup.isPending}
             >

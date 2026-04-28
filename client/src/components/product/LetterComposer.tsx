@@ -116,7 +116,7 @@ export function LetterComposer({ windowState, openAt, closeAt, isOwner, pending 
           type="button"
           onClick={submit}
           disabled={!canSubmit || pending}
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-[0_18px_35px_-18px_rgba(15,23,42,0.8)] transition hover:-translate-y-0.5 hover:bg-slate-800 disabled:translate-y-0 disabled:opacity-45"
+          className="u-btn u-btn-primary px-5 py-3 text-sm hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-45"
         >
           <Send className="h-4 w-4" />
           {pending ? "남기는 중…" : "편지 쓰기"}

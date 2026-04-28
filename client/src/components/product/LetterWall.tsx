@@ -131,7 +131,7 @@ function OpenLetterCard({
             <MailOpen className="h-4 w-4 text-indigo-500" />
             {letter.nickname}님에게서 온 편지
           </span>
-          <span className="rounded-full bg-slate-950 px-3 py-1 text-[10px] font-black text-white">
+          <span className="rounded-full bg-primary px-3 py-1 text-[10px] font-black text-white">
             {expanded ? "접기" : "읽기"}
           </span>
         </button>

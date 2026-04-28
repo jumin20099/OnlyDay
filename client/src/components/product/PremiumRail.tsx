@@ -17,7 +17,7 @@ export function PremiumRail() {
         {items.map((item) => (
           <div key={item.title} className="rounded-[1.25rem] bg-white/65 p-3">
             <p className="flex items-center gap-2 text-sm font-black text-slate-950">
-              <span className="rounded-full bg-slate-950 p-2 text-white">{item.icon}</span>
+              <span className="rounded-full bg-primary p-2 text-white">{item.icon}</span>
               {item.title}
             </p>
             <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">{item.body}</p>

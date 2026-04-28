@@ -9,11 +9,11 @@ type ShellProps = {
 
 const shellTone = {
   cream:
-    "bg-[radial-gradient(circle_at_12%_0%,#dbeafe_0,transparent_30%),radial-gradient(circle_at_88%_6%,#fde68a_0,transparent_26%),linear-gradient(180deg,#fafaf8_0%,#f3f0ea_100%)]",
+    "bg-[radial-gradient(circle_at_12%_0%,var(--color-accent-soft)_0,transparent_30%),radial-gradient(circle_at_88%_6%,var(--color-accent-warm)_0,transparent_26%),linear-gradient(180deg,var(--color-bg-main)_0,var(--color-bg-sub)_100%)]",
   night:
-    "bg-[radial-gradient(circle_at_10%_0%,#4f46e5_0,transparent_28%),radial-gradient(circle_at_90%_10%,#f59e0b_0,transparent_24%),linear-gradient(180deg,#101827_0%,#1d2433_100%)] text-white",
+    "bg-[radial-gradient(circle_at_10%_0%,var(--color-primary)_0,transparent_30%),radial-gradient(circle_at_90%_10%,var(--color-accent-warm)_0,transparent_24%),linear-gradient(180deg,#2b2331_0%,#1f1a24_100%)] text-white",
   mint:
-    "bg-[radial-gradient(circle_at_10%_0%,#bbf7d0_0,transparent_28%),radial-gradient(circle_at_90%_8%,#c7d2fe_0,transparent_28%),linear-gradient(180deg,#f7fbf7_0%,#eef2f7_100%)]",
+    "bg-[radial-gradient(circle_at_10%_0%,var(--color-accent-soft)_0,transparent_30%),radial-gradient(circle_at_90%_8%,var(--color-primary)_0,transparent_28%),linear-gradient(180deg,var(--color-bg-main)_0,var(--color-bg-sub)_100%)]",
 };
 
 export function ProductShell({ children, tone = "cream", className = "" }: ShellProps) {
@@ -48,10 +48,10 @@ export function GlassCard({
 export function BrandMark({ className = "" }: { className?: string }) {
   return (
     <span className={`inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.34em] ${className}`}>
-      <span className="grid h-7 w-7 place-items-center rounded-full bg-slate-950 text-[11px] text-white shadow-lg">
-        OD
+      <span className="grid h-11 w-11 place-items-center overflow-hidden sm:h-12 sm:w-12">
+        <img src="/onlyday-logo.png" alt="단하루 로고" className="h-full w-full object-contain" />
       </span>
-      Only Day
+      단하루
     </span>
   );
 }
@@ -80,7 +80,7 @@ export function PrimaryCTA({
     return (
       <a
         href={href}
-        className={`inline-flex items-center justify-center gap-2 rounded-full bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-[0_18px_35px_-18px_rgba(15,23,42,0.8)] transition hover:-translate-y-0.5 hover:bg-slate-800 ${className}`}
+        className={`u-btn u-btn-primary px-5 py-3 text-sm hover:-translate-y-0.5 ${className}`}
       >
         {body}
       </a>
@@ -92,7 +92,7 @@ export function PrimaryCTA({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`inline-flex items-center justify-center gap-2 rounded-full bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-[0_18px_35px_-18px_rgba(15,23,42,0.8)] transition hover:-translate-y-0.5 hover:bg-slate-800 disabled:translate-y-0 disabled:opacity-45 ${className}`}
+      className={`u-btn u-btn-primary px-5 py-3 text-sm hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-45 ${className}`}
     >
       {body}
     </button>

@@ -95,7 +95,7 @@ export default function CakeDetailPage() {
     const u = shareUrl(shareToken!);
     try {
       if (navigator.share) {
-        await navigator.share({ title: cake?.title ?? "Only Day", text: "여기에 촛불 하나 남겨줘", url: u });
+        await navigator.share({ title: cake?.title ?? "단하루", text: "여기에 촛불 하나 남겨줘", url: u });
       } else {
         await copyLink();
       }
@@ -321,8 +321,8 @@ function MobileDockButton({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center justify-center gap-1.5 rounded-full px-3 py-3 text-xs font-black shadow-sm ${
-        primary ? "bg-slate-950 text-white" : "bg-slate-100 text-slate-700"
+      className={`u-btn px-3 py-3 text-xs shadow-sm ${
+        primary ? "u-btn-primary text-white" : "u-btn-secondary text-slate-700"
       }`}
     >
       {icon}
