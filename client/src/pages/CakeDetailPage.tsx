@@ -2,6 +2,7 @@ import {
   useCakeByShareToken,
   useCandles,
   useCreateLetter,
+  useDeleteLetter,
   useLetters,
   useSaveLetter,
   useUnlockStates,
@@ -45,6 +46,8 @@ export default function CakeDetailPage() {
   } = useLetters(cake?.cakeId, { enabled: letterQueryOn });
   const createLetter = useCreateLetter();
   const saveLetter = useSaveLetter();
+  const deleteLetter = useDeleteLetter();
+  const [pendingDeleteLetterId, setPendingDeleteLetterId] = useState<string | null>(null);
   const [unlockPop, setUnlockPop] = useState<{ key: string } | null>(null);
   const [activeSheet, setActiveSheet] = useState<"share" | "letters" | "write" | null>(null);
   const prevUnlocked = useRef<Set<string> | null>(null);
@@ -75,6 +78,8 @@ export default function CakeDetailPage() {
 
   const writeWindowState = useMemo(() => (cake ? getWriteWindowState(cake.openAt, cake.closeAt) : "closed"), [cake]);
   const canSubmit = writeWindowState === "open";
+  const nextUnlock = unlockStates.find((u) => !u.unlocked);
+  const remainToNext = Math.max(0, (nextUnlock?.thresholdCount ?? cake?.candleCount ?? 0) - (cake?.candleCount ?? 0));
 
   const copyLink = async () => {
     const u = shareUrl(shareToken!);
@@ -143,6 +148,17 @@ export default function CakeDetailPage() {
             onError: (e) => toast.error(e instanceof Error ? e.message : "보관함에 담지 못했어요."),
           })
       : undefined;
+  const deleteLetterAction =
+    isOwner && isAuthenticated && isBirthdayKst
+      ? (id: string) => {
+          setPendingDeleteLetterId(id);
+          deleteLetter.mutate(id, {
+            onSuccess: () => toast.success("편지와 촛불을 삭제했어요."),
+            onError: (e) => toast.error(e instanceof Error ? e.message : "편지 삭제에 실패했어요."),
+            onSettled: () => setPendingDeleteLetterId((prev) => (prev === id ? null : prev)),
+          });
+        }
+      : undefined;
 
   return (
     <ProductShell>
@@ -179,7 +195,7 @@ export default function CakeDetailPage() {
           <div className="mt-3 grid grid-cols-3 gap-2">
             <MiniStat label="촛불" value={`${cake.candleCount}`} />
             <MiniStat label="참여자" value={`${candles.length}`} />
-            <MiniStat label="편지" value={letterQueryOn ? `${letters.length}` : "비공개"} />
+            <MiniStat label="다음 변화까지" value={nextUnlock ? `+${remainToNext}` : "완료"} />
           </div>
         </main>
 
@@ -199,7 +215,10 @@ export default function CakeDetailPage() {
               canReadLetters={letterQueryOn}
               lettersPending={letterQueryOn && lettersPending}
               onSaveLetter={saveLetterAction}
+            onDeleteLetter={deleteLetterAction}
               saveLetterPending={saveLetter.isPending}
+            deleteLetterPending={deleteLetter.isPending}
+            pendingDeleteLetterId={pendingDeleteLetterId}
             />
 
             {!letterQueryOn ? <PublicLockedPreview names={candles.map((c) => c.nickname)} candleCount={cake.candleCount} /> : null}
@@ -247,7 +266,11 @@ export default function CakeDetailPage() {
             canReadLetters={letterQueryOn}
             lettersPending={letterQueryOn && lettersPending}
             onSaveLetter={saveLetterAction}
+            onDeleteLetter={deleteLetterAction}
             saveLetterPending={saveLetter.isPending}
+            deleteLetterPending={deleteLetter.isPending}
+            pendingDeleteLetterId={pendingDeleteLetterId}
+            quickRead
           />
         ) : (
           <PublicLockedPreview names={candles.map((c) => c.nickname)} candleCount={cake.candleCount} />

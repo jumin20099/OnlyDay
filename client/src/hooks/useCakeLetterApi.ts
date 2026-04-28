@@ -170,6 +170,24 @@ export function useSaveLetter() {
   });
 }
 
+export function useDeleteLetter() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (letterId: string) => {
+      const { data } = await api.delete<ApiResponse<null>>(`/letters/${letterId}`);
+      if (!data.success) throw new Error(data.error?.message ?? "편지/촛불 삭제 실패");
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["letters"] });
+      qc.invalidateQueries({ queryKey: ["candles"] });
+      qc.invalidateQueries({ queryKey: ["unlock"] });
+      qc.invalidateQueries({ queryKey: ["cakes"] });
+      qc.invalidateQueries({ queryKey: ["cake"] });
+      qc.invalidateQueries({ queryKey: ["saved-letters"] });
+    },
+  });
+}
+
 export function useSavedLetters(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ["saved-letters"],

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { ArrowRight, Sparkles, X } from "lucide-react";
 
 type ShellProps = {
@@ -130,7 +130,7 @@ export function ProgressBar({
       </div>
       <div className="mt-2 h-3 overflow-hidden rounded-full bg-slate-200/70">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-slate-900 via-indigo-500 to-amber-300 transition-[width] duration-700"
+          className="h-full rounded-full bg-[#a5b4fc] transition-[width] duration-700"
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -157,19 +157,39 @@ export function MobileSheet({
   onClose: () => void;
   children: ReactNode;
 }) {
-  if (!open) return null;
+  const [shouldRender, setShouldRender] = useState(open);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setShouldRender(true);
+      // Open 시 첫 프레임에 opacity-0이 실제로 그려진 뒤 전환되도록 지연
+      const timer = window.setTimeout(() => setVisible(true), 20);
+      return () => window.clearTimeout(timer);
+    }
+    setVisible(false);
+    const timer = window.setTimeout(() => setShouldRender(false), 180);
+    return () => window.clearTimeout(timer);
+  }, [open]);
+
+  if (!shouldRender) return null;
 
   return (
     <div className="fixed inset-0 z-[220] lg:hidden" role="dialog" aria-modal="true" aria-label={title}>
-      <button type="button" className="absolute inset-0 bg-slate-950/45 backdrop-blur-[2px]" onClick={onClose} aria-label="닫기" />
-      <div className="absolute inset-x-0 bottom-0 max-h-[86dvh] overflow-hidden rounded-t-[1.75rem] border border-white/70 bg-[#fbfaf7] shadow-2xl">
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200/70 bg-[#fbfaf7]/92 px-4 py-3 backdrop-blur">
+      <button
+        type="button"
+        className={`absolute inset-0 bg-slate-950/45 backdrop-blur-[2px] transition-opacity duration-[180ms] ${visible ? "opacity-100" : "opacity-0"}`}
+        onClick={onClose}
+        aria-label="닫기"
+      />
+      <div className={`absolute left-1/2 top-1/2 w-[min(92vw,30rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[1.4rem] border border-white/70 bg-[#fbfaf7] shadow-2xl transition-opacity duration-[180ms] ${visible ? "opacity-100" : "opacity-0"}`}>
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200/70 bg-[#fbfaf7]/95 px-4 py-3 backdrop-blur">
           <p className="text-sm font-black tracking-[-0.02em] text-slate-950">{title}</p>
           <button type="button" onClick={onClose} className="rounded-full bg-slate-100 p-2 text-slate-600">
             <X className="h-4 w-4" />
           </button>
         </div>
-        <div className="max-h-[calc(86dvh-57px)] overflow-y-auto px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3">
+        <div className="max-h-[min(78dvh,42rem)] overflow-y-auto px-3 pb-4 pt-3">
           {children}
         </div>
       </div>

@@ -14,4 +14,6 @@ public interface SavedLetterRepository extends JpaRepository<SavedLetter, UUID> 
     List<SavedLetter> findAllByOwnerId(@Param("ownerId") UUID ownerId);
 
     Optional<SavedLetter> findByOwner_IdAndSourceLetterId(UUID ownerId, UUID sourceLetterId);
+
+    void deleteAllBySourceLetterId(UUID sourceLetterId);
 }

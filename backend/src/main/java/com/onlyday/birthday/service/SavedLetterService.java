@@ -52,6 +52,11 @@ public class SavedLetterService {
                 .ifPresent(savedLetterRepository::delete);
     }
 
+    @Transactional
+    public void removeAllBySourceLetter(UUID letterId) {
+        savedLetterRepository.deleteAllBySourceLetterId(letterId);
+    }
+
     @Transactional(readOnly = true)
     public List<LetterDto.SavedLetterResponse> getSavedLetters(UUID ownerId) {
         return savedLetterRepository.findAllByOwnerId(ownerId).stream()

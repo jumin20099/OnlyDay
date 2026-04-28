@@ -10,6 +10,7 @@ import com.onlyday.birthday.service.SavedLetterService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,6 +41,12 @@ public class LetterController {
     @PostMapping("/{id}/save")
     public ApiResponse<Void> saveLetter(@PathVariable("id") UUID letterId) {
         letterFlowService.saveLetter(SecurityUtils.currentUser().userId(), letterId);
+        return ApiResponse.ok(null);
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteLetter(@PathVariable("id") UUID letterId) {
+        letterFlowService.deleteLetter(SecurityUtils.currentUser().userId(), letterId);
         return ApiResponse.ok(null);
     }
 

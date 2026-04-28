@@ -5,6 +5,7 @@ import com.onlyday.birthday.dto.candle.CandleDto;
 import com.onlyday.birthday.dto.letter.LetterCommandDto;
 import com.onlyday.birthday.dto.letter.LetterDto;
 import com.onlyday.birthday.exception.BusinessException;
+import com.onlyday.birthday.repository.CandleRepository;
 import com.onlyday.birthday.repository.LetterRepository;
 import com.onlyday.birthday.time.CakeKstTimeWindow;
 import java.time.Clock;
@@ -20,17 +21,20 @@ public class LetterFlowService {
     private final CandleLetterService candleLetterService;
     private final SavedLetterService savedLetterService;
     private final LetterRepository letterRepository;
+    private final CandleRepository candleRepository;
     private final LetterResponseMapper letterResponseMapper;
     private final Clock clock;
 
     public LetterFlowService(CandleLetterService candleLetterService,
                              SavedLetterService savedLetterService,
                              LetterRepository letterRepository,
+                             CandleRepository candleRepository,
                              LetterResponseMapper letterResponseMapper,
                              Clock clock) {
         this.candleLetterService = candleLetterService;
         this.savedLetterService = savedLetterService;
         this.letterRepository = letterRepository;
+        this.candleRepository = candleRepository;
         this.letterResponseMapper = letterResponseMapper;
         this.clock = clock;
     }
@@ -55,6 +59,23 @@ public class LetterFlowService {
     @Transactional
     public void saveLetter(UUID ownerId, UUID letterId) {
         savedLetterService.saveLetter(ownerId, letterId);
+    }
+
+    @Transactional
+    public void deleteLetter(UUID ownerId, UUID letterId) {
+        Letter letter = letterRepository.findByIdWithCake(letterId)
+                .orElseThrow(() -> new BusinessException("LETTER_NOT_FOUND", "Letter not found", HttpStatus.NOT_FOUND));
+
+        var candle = letter.getCandle();
+        var cake = candle.getCake();
+        if (!cake.getOwner().getId().equals(ownerId)) {
+            throw new BusinessException("FORBIDDEN", "You cannot delete this letter", HttpStatus.FORBIDDEN);
+        }
+
+        savedLetterService.removeAllBySourceLetter(letterId);
+        candleRepository.delete(candle);
+        int actual = (int) candleRepository.countByCake_Id(cake.getId());
+        cake.setCandleCount(actual);
     }
 
     @Transactional(readOnly = true)
