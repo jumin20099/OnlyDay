@@ -10,13 +10,14 @@ type Props = {
   unlockStates: UnlockState[];
   caption?: string;
   compact?: boolean;
+  forceUnlocked?: boolean;
 };
 
-export function CakeStage({ cake, candles, unlockStates, caption, compact = false }: Props) {
+export function CakeStage({ cake, candles, unlockStates, caption, compact = false, forceUnlocked = false }: Props) {
   const theme = FLAVOR_THEME[cake.flavor];
   const goal = completionGoalCandleCount(unlockStates);
   const nextUnlock = unlockStates.find((u) => !u.unlocked);
-  const visualUnlocked = cake.candleCount > 0 || unlockStates.some((u) => u.unlocked);
+  const visualUnlocked = forceUnlocked || cake.candleCount > 0 || unlockStates.some((u) => u.unlocked);
   const cakeFlavor = apiFlavorToCakeFlavor(cake.flavor);
   const candleColors = apiCandlesToCandleColors(candles);
   const progressPct = Math.min(1, cake.candleCount / Math.max(goal, 1));

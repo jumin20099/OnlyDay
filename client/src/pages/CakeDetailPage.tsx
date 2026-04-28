@@ -168,6 +168,7 @@ export default function CakeDetailPage() {
             cake={cake}
             candles={candles}
             unlockStates={unlockStates}
+            forceUnlocked={isBirthdayKst}
             caption={
               letterQueryOn
                 ? "열린 편지는 아래 버튼에서 확인하세요."
@@ -188,6 +189,7 @@ export default function CakeDetailPage() {
               cake={cake}
               candles={candles}
               unlockStates={unlockStates}
+              forceUnlocked={isBirthdayKst}
               caption="공유할수록 촛불이 쌓이고, 케이크와 편지가 단계적으로 열립니다."
             />
 

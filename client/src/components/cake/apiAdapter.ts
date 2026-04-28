@@ -9,6 +9,11 @@ export function apiFlavorToCakeFlavor(flavor: ApiCake["flavor"]): CakeFlavor {
     VANILLA: "vanilla",
     MANGO: "mango",
     MATCHA: "matcha",
+    CHEESE: "cheese",
+    LEMON: "lemon",
+    GREEN_GRAPE: "greenGrape",
+    RED_GRAPE: "redGrape",
+    BLUEBERRY: "blueberry",
   };
   return map[flavor];
 }

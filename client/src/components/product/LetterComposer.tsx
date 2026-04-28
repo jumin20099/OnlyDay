@@ -50,13 +50,15 @@ export function LetterComposer({ windowState, openAt, closeAt, isOwner, pending 
         </div>
       </div>
 
-      <div className="mt-3 sm:mt-5">
-        <WriteWindowNotice state={isOwner ? "closed" : windowState} openAt={openAt} closeAt={closeAt} />
-      </div>
+      {!isOwner ? (
+        <div className="mt-3 sm:mt-5">
+          <WriteWindowNotice state={windowState} openAt={openAt} closeAt={closeAt} />
+        </div>
+      ) : null}
 
       {isOwner ? (
         <p className="mt-3 rounded-2xl bg-slate-100/80 p-3 text-xs font-bold leading-5 text-slate-500">
-          이 케이크의 주인은 작성할 수 없어요. 링크를 공유해 친구들의 참여를 받아보세요.
+          이 케이크의 주인은 촛불/편지를 작성할 수 없어요. 대신 도착한 편지를 확인하고 링크를 공유해 더 많은 참여를 모아보세요.
         </p>
       ) : null}
 

@@ -85,23 +85,6 @@ export function Cake({
           <ellipse cx="236" cy="252" rx="132" ry="92" fill={`url(#${idPrefix}-bottomShade)`} pointerEvents="none" />
         </g>
 
-        <path
-          d="M78 350a122 122 0 0 1 244 0"
-          fill="none"
-          stroke="rgba(255,255,255,0.55)"
-          strokeWidth="9"
-          strokeLinecap="round"
-        />
-        <path
-          d="M78 350a122 122 0 0 1 244 0"
-          fill="none"
-          stroke={theme.glow}
-          strokeWidth={locked ? 8 : 10}
-          strokeLinecap="round"
-          strokeDasharray={`${progress * 383} 383`}
-          opacity={locked ? 0.35 : 0.92}
-          className="transition-all duration-700"
-        />
       </svg>
 
       {locked ? (

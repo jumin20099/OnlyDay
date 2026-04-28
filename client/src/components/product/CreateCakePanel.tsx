@@ -4,7 +4,18 @@ import { GlassCard, PrimaryCTA } from "./Primitives";
 import { Cake as CakePreview, apiFlavorToCakeFlavor } from "@/components/cake";
 import { CalendarDays, Sparkles } from "lucide-react";
 
-export const PRODUCT_FLAVORS: Cake["flavor"][] = ["VANILLA", "MATCHA", "CHOCOLATE", "MANGO", "STRAWBERRY"];
+export const PRODUCT_FLAVORS: Cake["flavor"][] = [
+  "VANILLA",
+  "MATCHA",
+  "CHOCOLATE",
+  "MANGO",
+  "STRAWBERRY",
+  "CHEESE",
+  "LEMON",
+  "GREEN_GRAPE",
+  "RED_GRAPE",
+  "BLUEBERRY",
+];
 
 type Props = {
   title: string;

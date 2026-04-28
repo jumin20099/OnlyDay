@@ -50,7 +50,7 @@ public class CakeService {
     @Transactional
     public CakeDto.CakeSummary createCake(UUID ownerId, CakeDto.CreateRequest request) {
         User owner = userService.getById(ownerId);
-        LocalDate birthday = CakeKstTimeWindow.normalizeToReferenceBirthday(request.birthday());
+        LocalDate birthday = request.birthday();
         CakeKstTimeWindow.TimeWindow w = CakeKstTimeWindow.currentWriteWindowForPersistence(clock, birthday);
         OffsetDateTime openAt = w.openAt();
         OffsetDateTime closeAt = w.closeAt();
@@ -87,7 +87,7 @@ public class CakeService {
         Cake cake = cakeRepository.findById(cakeId)
                 .orElseThrow(() -> new BusinessException("CAKE_NOT_FOUND", "Cake not found", HttpStatus.NOT_FOUND));
         validateOwner(cake, ownerId);
-        LocalDate birthday = CakeKstTimeWindow.normalizeToReferenceBirthday(request.birthday());
+        LocalDate birthday = request.birthday();
         CakeKstTimeWindow.TimeWindow w = CakeKstTimeWindow.currentWriteWindowForPersistence(clock, birthday);
         OffsetDateTime openAt = w.openAt();
         OffsetDateTime closeAt = w.closeAt();

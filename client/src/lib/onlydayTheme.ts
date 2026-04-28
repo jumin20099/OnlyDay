@@ -34,6 +34,36 @@ export const FLAVOR_THEME: Record<
     accent: "#f59e0b",
     emoji: "🥭",
   },
+  CHEESE: {
+    label: "치즈",
+    hero: ["#fff8cf", "#fee68b", "#facc15"],
+    accent: "#d97706",
+    emoji: "🧀",
+  },
+  LEMON: {
+    label: "레몬",
+    hero: ["#fffde8", "#fef08a", "#facc15"],
+    accent: "#ca8a04",
+    emoji: "🍋",
+  },
+  GREEN_GRAPE: {
+    label: "청포도",
+    hero: ["#f2fee8", "#c7f9a4", "#86efac"],
+    accent: "#4d7c0f",
+    emoji: "🍇",
+  },
+  RED_GRAPE: {
+    label: "적포도",
+    hero: ["#f6e9ff", "#d8b4fe", "#c084fc"],
+    accent: "#7e22ce",
+    emoji: "🍇",
+  },
+  BLUEBERRY: {
+    label: "블루베리",
+    hero: ["#edf3ff", "#bfdbfe", "#93c5fd"],
+    accent: "#1d4ed8",
+    emoji: "🫐",
+  },
 };
 
 export const CANDLE_PRESET_SWATCHES = [

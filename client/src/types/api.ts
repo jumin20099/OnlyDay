@@ -20,7 +20,17 @@ export type Cake = {
   /** 케이크 주인(공유 뷰에서 “내 케이크인지” 판단) */
   ownerId: string;
   title: string;
-  flavor: "CHOCOLATE" | "MANGO" | "MATCHA" | "STRAWBERRY" | "VANILLA";
+  flavor:
+    | "CHOCOLATE"
+    | "MANGO"
+    | "MATCHA"
+    | "STRAWBERRY"
+    | "VANILLA"
+    | "CHEESE"
+    | "LEMON"
+    | "GREEN_GRAPE"
+    | "RED_GRAPE"
+    | "BLUEBERRY";
   shareToken: string;
   birthday: string;
   openAt: string;
