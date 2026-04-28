@@ -195,7 +195,7 @@ export default function CakeDetailPage() {
           <div className="mt-3 grid grid-cols-3 gap-2">
             <MiniStat label="촛불" value={`${cake.candleCount}`} />
             <MiniStat label="참여자" value={`${candles.length}`} />
-            <MiniStat label="다음 변화까지" value={nextUnlock ? `+${remainToNext}` : "완료"} />
+            <MiniStat label="다음 변화까지" value={!isBirthdayKst ? "잠김" : nextUnlock ? `+${remainToNext}` : "완료"} />
           </div>
         </main>
 
@@ -277,15 +277,23 @@ export default function CakeDetailPage() {
         )}
       </MobileSheet>
 
-      <MobileSheet open={activeSheet === "write"} title={isOwner ? "작성 안내" : "편지 쓰기"} onClose={() => setActiveSheet(null)}>
-        <LetterComposer
-          windowState={writeWindowState}
-          openAt={cake.openAt}
-          closeAt={cake.closeAt}
-          isOwner={isOwner}
-          pending={createLetter.isPending}
-          onSubmit={submitLetter}
-        />
+      <MobileSheet open={activeSheet === "write"} title={isOwner ? "안내" : "편지 쓰기"} onClose={() => setActiveSheet(null)}>
+        {isOwner ? (
+          <OwnerGuideCard
+            candleCount={cake.candleCount}
+            onOpenShare={() => setActiveSheet("share")}
+            onOpenLetters={() => setActiveSheet("letters")}
+          />
+        ) : (
+          <LetterComposer
+            windowState={writeWindowState}
+            openAt={cake.openAt}
+            closeAt={cake.closeAt}
+            isOwner={isOwner}
+            pending={createLetter.isPending}
+            onSubmit={submitLetter}
+          />
+        )}
       </MobileSheet>
 
       <UnlockCelebrationModal
@@ -356,6 +364,40 @@ function PublicLockedPreview({ names, candleCount }: { names: string[]; candleCo
           </div>
         ))}
       </div>
+    </GlassCard>
+  );
+}
+
+function OwnerGuideCard({
+  candleCount,
+  onOpenShare,
+  onOpenLetters,
+}: {
+  candleCount: number;
+  onOpenShare: () => void;
+  onOpenLetters: () => void;
+}) {
+  return (
+    <GlassCard className="space-y-4 p-5 sm:p-6">
+      <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">for owner · 단하루</p>
+      <h3 className="text-2xl font-black tracking-[-0.04em] text-slate-950">촛불이 모일수록 케이크가 더 화려해져요.</h3>
+      <div className="space-y-2 rounded-2xl bg-slate-50 px-4 py-3">
+        <p className="text-sm font-bold text-slate-700">지금까지 촛불 {candleCount}개가 쌓였어요.</p>
+        <p className="text-xs font-semibold leading-5 text-slate-500">
+          링크를 공유해서 촛불을 모으고, 케이크를 화려하게 만들어봐요.
+        </p>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <button type="button" className="u-btn u-btn-secondary px-3 py-3 text-xs" onClick={onOpenLetters}>
+          받은 편지 보기
+        </button>
+        <button type="button" className="u-btn u-btn-primary px-3 py-3 text-xs" onClick={onOpenShare}>
+          링크 공유하기
+        </button>
+      </div>
+      <p className="text-xs font-semibold leading-5 text-slate-500">
+        단하루, 잊지 못 할 생일을 만들어봐요.
+      </p>
     </GlassCard>
   );
 }

@@ -47,7 +47,7 @@ export function CreateCakePanel({
       <div className="flex items-start justify-between gap-3 sm:gap-4">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">첫 시작</p>
-          <h2 className="mt-1 text-xl font-black tracking-[-0.04em] text-slate-950 sm:mt-2 sm:text-2xl">오늘의 케이크를 열어볼까요?</h2>
+          <h2 className="mt-1 text-xl font-black tracking-[-0.04em] text-slate-950 sm:mt-2 sm:text-2xl">당신의 특별한 단하루를 위해</h2>
           <p className="mt-1 text-xs font-medium leading-5 text-slate-500 sm:mt-2 sm:text-sm sm:leading-6">
             이름과 날짜만 적으면, 바로 초대 링크가 생겨요.
           </p>
@@ -67,14 +67,14 @@ export function CreateCakePanel({
       >
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500/80">지금 분위기</p>
-            <p className="mt-0.5 truncate text-sm font-black text-slate-950">{selectedTheme.label} 케이크</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500/80">Flavor</p>
+            <p className="mt-0.5 truncate text-sm font-black text-slate-950">{selectedTheme.label}맛 케이크</p>
           </div>
             <span className="rounded-full bg-white/70 px-2.5 py-1 text-[10px] font-black text-slate-600 shadow-sm">
-            선택한 케이크
+            미리보기
           </span>
         </div>
-        <div className="mx-auto mt-1 aspect-[4/3] max-h-44 max-w-[15rem] sm:max-h-52">
+        <div className="mx-auto mt-1 aspect-[4/3] max-h-44 max-w-[15rem] -translate-y-4 sm:translate-y-0 sm:max-h-52">
           <CakePreview
             flavor={apiFlavorToCakeFlavor(flavor)}
             candleCount={7}
@@ -89,12 +89,11 @@ export function CreateCakePanel({
 
       <div className="mt-4 grid gap-3 sm:mt-6 sm:gap-4">
         <label className="grid gap-2 text-sm font-bold text-slate-700">
-          케이크 제목
+          케이크 이름
           <input
             className="rounded-2xl border border-slate-200 bg-white/85 px-4 py-2.5 text-sm font-semibold text-slate-950 outline-none transition focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100 sm:py-3"
-            value={title}
             onChange={(e) => onTitleChange(e.target.value)}
-            placeholder="예) 주미니의 스물넷 생일"
+            placeholder="예) 단하루의 n번째 생일"
             maxLength={100}
           />
         </label>
@@ -107,7 +106,7 @@ export function CreateCakePanel({
               className="w-full rounded-2xl border border-slate-200 bg-white/85 px-10 py-2.5 text-sm font-semibold text-slate-950 outline-none transition focus:border-indigo-300 focus:ring-4 focus:ring-indigo-100 sm:py-3"
               value={birthdayRaw}
               onChange={(e) => onBirthdayChange(e.target.value)}
-              placeholder="예) 20001021 또는 2000-10-21"
+              placeholder="예) 20070123"
               inputMode="numeric"
               autoComplete="bday"
             />
@@ -118,7 +117,7 @@ export function CreateCakePanel({
         </label>
 
         <div>
-          <p className="text-sm font-bold text-slate-700">케이크 분위기</p>
+          <p className="text-sm font-bold text-slate-700">맛</p>
           <div className="mt-2 grid grid-cols-5 gap-1.5 sm:mt-3 sm:gap-2">
             {PRODUCT_FLAVORS.map((f) => {
               const t = FLAVOR_THEME[f];

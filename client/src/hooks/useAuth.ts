@@ -2,10 +2,26 @@ import { api } from "@/lib/api";
 import { AUTH_STATE_EVENT, clearSession, getStoredUser, setSession } from "@/lib/auth-storage";
 import type { ApiResponse, AuthResponse, UserPayload } from "@/types/api";
 import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { useSyncExternalStore } from "react";
 
 type LoginInput = { email: string; password: string };
 type SignupInput = { email: string; password: string; displayName: string };
+
+function getAuthErrorMessage(error: unknown, mode: "login" | "signup") {
+  if (!axios.isAxiosError(error)) {
+    return mode === "login" ? "로그인에 실패했어요." : "회원가입에 실패했어요.";
+  }
+
+  const status = error.response?.status;
+  if (mode === "login" && (status === 400 || status === 401)) {
+    return "이메일 또는 비밀번호가 올바르지 않아요.";
+  }
+  if (mode === "signup" && status === 409) {
+    return "이미 가입된 이메일이에요.";
+  }
+  return mode === "login" ? "로그인에 실패했어요." : "회원가입에 실패했어요.";
+}
 
 function subscribeAuthStorage(onStoreChange: () => void) {
   const onStorage = () => onStoreChange();
@@ -29,10 +45,14 @@ export function useAuthState() {
 export function useLogin() {
   return useMutation({
     mutationFn: async (input: LoginInput) => {
-      const { data } = await api.post<ApiResponse<AuthResponse>>("/auth/login", input);
-      if (!data.success) throw new Error(data.error?.message ?? "로그인 실패");
-      setSession(data.data.accessToken, data.data.user);
-      return data.data;
+      try {
+        const { data } = await api.post<ApiResponse<AuthResponse>>("/auth/login", input);
+        if (!data.success) throw new Error(data.error?.message ?? "로그인 실패");
+        setSession(data.data.accessToken, data.data.user);
+        return data.data;
+      } catch (error) {
+        throw new Error(getAuthErrorMessage(error, "login"));
+      }
     },
   });
 }
@@ -40,10 +60,14 @@ export function useLogin() {
 export function useSignup() {
   return useMutation({
     mutationFn: async (input: SignupInput) => {
-      const { data } = await api.post<ApiResponse<AuthResponse>>("/auth/signup", input);
-      if (!data.success) throw new Error(data.error?.message ?? "회원가입 실패");
-      setSession(data.data.accessToken, data.data.user);
-      return data.data;
+      try {
+        const { data } = await api.post<ApiResponse<AuthResponse>>("/auth/signup", input);
+        if (!data.success) throw new Error(data.error?.message ?? "회원가입 실패");
+        setSession(data.data.accessToken, data.data.user);
+        return data.data;
+      } catch (error) {
+        throw new Error(getAuthErrorMessage(error, "signup"));
+      }
     },
   });
 }

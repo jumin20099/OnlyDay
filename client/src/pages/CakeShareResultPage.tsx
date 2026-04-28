@@ -85,7 +85,7 @@ export default function CakeShareResultPage() {
           <Link href={`/cake/${shareToken}`}>
             <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-2 text-xs font-black backdrop-blur">
               <ChevronLeft className="h-4 w-4" />
-              케이크로 돌아가기
+              돌아가기
             </span>
           </Link>
           <BrandMark className="text-white/80" />
