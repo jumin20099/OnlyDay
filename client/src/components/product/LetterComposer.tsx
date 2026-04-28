@@ -42,10 +42,10 @@ export function LetterComposer({ windowState, openAt, closeAt, isOwner, pending 
     <section className="rounded-[1.5rem] border border-white/70 bg-white/68 p-4 shadow-[0_18px_48px_-34px_rgba(15,23,42,0.5)] backdrop-blur-xl sm:rounded-[2rem] sm:p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">participate</p>
-          <h2 className="mt-1 text-xl font-black tracking-[-0.04em] text-slate-950 sm:mt-2 sm:text-2xl">촛불과 편지 남기기</h2>
+          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">편지 남기기</p>
+          <h2 className="mt-1 text-xl font-black tracking-[-0.04em] text-slate-950 sm:mt-2 sm:text-2xl">편지를 쓰면 촛불이 생겨요.</h2>
           <p className="mt-1 text-xs font-medium leading-5 text-slate-500 sm:mt-2 sm:text-sm sm:leading-6">
-            친구의 케이크에 한 줄을 남기면 촛불 progress가 바로 자라요.
+            편지를 써주고 친구의 생일을 축하해봐요.
           </p>
         </div>
       </div>
@@ -58,7 +58,7 @@ export function LetterComposer({ windowState, openAt, closeAt, isOwner, pending 
 
       {isOwner ? (
         <p className="mt-3 rounded-2xl bg-slate-100/80 p-3 text-xs font-bold leading-5 text-slate-500">
-          이 케이크의 주인은 촛불/편지를 작성할 수 없어요. 대신 도착한 편지를 확인하고 링크를 공유해 더 많은 참여를 모아보세요.
+          주인은 직접 남길 수 없어요. 대신 편지를 확인하고 링크를 더 널리 나눠보세요.
         </p>
       ) : null}
 
@@ -104,7 +104,7 @@ export function LetterComposer({ windowState, openAt, closeAt, isOwner, pending 
             value={content}
             onChange={(e) => setContent(e.target.value)}
             disabled={!canSubmit}
-            placeholder="생일 당일에 열릴 메시지를 남겨주세요."
+            placeholder="생일 편지를 남겨주세요."
             maxLength={MAX}
           />
           <span className="text-right text-xs font-semibold text-slate-400">
@@ -119,7 +119,7 @@ export function LetterComposer({ windowState, openAt, closeAt, isOwner, pending 
           className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-[0_18px_35px_-18px_rgba(15,23,42,0.8)] transition hover:-translate-y-0.5 hover:bg-slate-800 disabled:translate-y-0 disabled:opacity-45"
         >
           <Send className="h-4 w-4" />
-          {pending ? "전송 중" : "촛불 남기기"}
+          {pending ? "남기는 중…" : "편지 쓰기"}
         </button>
       </div>
     </section>

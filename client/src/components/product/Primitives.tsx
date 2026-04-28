@@ -123,7 +123,7 @@ export function ProgressBar({
   return (
     <div className={className}>
       <div className="flex items-end justify-between gap-3 text-xs text-slate-600">
-        <span>{label ?? "Progress"}</span>
+        <span>{label ?? "진행도"}</span>
         <span className="font-black text-slate-950">
           {value}/{max}
         </span>
@@ -138,7 +138,7 @@ export function ProgressBar({
   );
 }
 
-export function AdSlot({ label = "ad-friendly space" }: { label?: string }) {
+export function AdSlot({ label = "광고 영역" }: { label?: string }) {
   return (
     <div className="rounded-2xl border border-dashed border-slate-300/80 bg-white/35 p-3 text-center text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400 sm:rounded-3xl sm:p-4 sm:text-[11px]">
       {label}

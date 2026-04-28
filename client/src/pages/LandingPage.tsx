@@ -26,29 +26,31 @@ export default function LandingPage() {
       <ProductContainer className="hidden gap-6 pb-16 sm:grid lg:grid-cols-[1fr_320px]">
         <section className="space-y-6">
           <div className="space-y-3">
-            <SectionLabel>how it works</SectionLabel>
+            <SectionLabel>쌓이면 달라져요</SectionLabel>
             <h2 className="max-w-2xl text-3xl font-black tracking-[-0.05em] text-slate-950 sm:text-4xl">
-              공유가 곧 참여가 되고, 참여가 곧 생일 보상이 됩니다.
+              편지를 모을수록,
+              <br />
+              케이크가 더 특별해져요.
             </h2>
           </div>
 
           <div className="grid gap-3 md:grid-cols-3">
-            <FlowCard icon={<Share2 className="h-5 w-5" />} title="1. 링크 공유" body="케이크를 만들면 바로 친구에게 보낼 수 있는 링크가 생겨요." />
-            <FlowCard icon={<MessageCircle className="h-5 w-5" />} title="2. 촛불과 편지" body="친구들은 로그인 없이 촛불과 생일 편지를 남길 수 있어요." />
-            <FlowCard icon={<Lock className="h-5 w-5" />} title="3. 잠금 해제" body="생일 당일, 촛불이 모인 만큼 편지가 차례로 열립니다." />
+            <FlowCard icon={<Share2 className="h-5 w-5" />} title="1. 링크를 나눠요" body="링크 하나로 친구들의 축하를 모아요." />
+            <FlowCard icon={<MessageCircle className="h-5 w-5" />} title="2. 편지가 쌓여요" body="친구들은 로그인 없이 편지와 촛불을 남겨요." />
+            <FlowCard icon={<Lock className="h-5 w-5" />} title="3. 케이크가 변해요" body="쌓인 편지만큼 케이크 디자인과 상태가 달라져요." />
           </div>
 
           <GlassCard className="grid gap-4 p-5 md:grid-cols-[1fr_auto] md:items-center">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">product promise</p>
-              <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-slate-950">기능보다 흐름을 먼저 설계했어요</h3>
+              <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">우리의 약속</p>
+              <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-slate-950">쌓일수록 더 특별하게</h3>
               <p className="mt-2 text-sm font-medium leading-6 text-slate-500">
-                공개 랜딩, 생성, 공유, 참여, 성장, 보상까지 한 흐름으로 이어지고, 데이터는 기존 API에서만 가져옵니다.
+                만들고 나누면, 편지가 쌓이고 케이크가 달라지는 흐름.
               </p>
             </div>
             <Link href={isAuthenticated ? "/cakes" : "/login?next=/cakes"}>
               <span className="inline-flex items-center justify-center rounded-full bg-slate-950 px-5 py-3 text-sm font-black text-white">
-                시작하기
+                지금 시작하기
               </span>
             </Link>
           </GlassCard>
@@ -56,7 +58,7 @@ export default function LandingPage() {
 
         <div className="space-y-4">
           <PremiumRail />
-          <AdSlot label="non-intrusive ad slot" />
+          <AdSlot label="광고 영역" />
         </div>
       </ProductContainer>
     </ProductShell>

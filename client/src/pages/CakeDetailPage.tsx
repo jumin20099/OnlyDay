@@ -82,7 +82,7 @@ export default function CakeDetailPage() {
       await navigator.clipboard.writeText(u);
       toast.success("링크를 복사했어요.");
     } catch {
-      toast.error("복사에 실패했어요.");
+      toast.error("복사하지 못했어요.");
     }
   };
 
@@ -90,7 +90,7 @@ export default function CakeDetailPage() {
     const u = shareUrl(shareToken!);
     try {
       if (navigator.share) {
-        await navigator.share({ title: cake?.title ?? "Only Day", text: "케이크에 촛불을 달아줘", url: u });
+        await navigator.share({ title: cake?.title ?? "Only Day", text: "여기에 촛불 하나 남겨줘", url: u });
       } else {
         await copyLink();
       }
@@ -101,11 +101,11 @@ export default function CakeDetailPage() {
 
   const submitLetter = async (value: LetterComposerValue) => {
     if (!value.nickname.trim() || !value.content.trim()) {
-      toast.message("닉네임과 편지를 입력해 주세요.");
+      toast.message("닉네임과 편지를 채워주세요.");
       return;
     }
     if (!canSubmit) {
-      toast.message("지금은 작성 시간이 아니에요.");
+      toast.message("지금은 남길 수 없는 시간이에요.");
       return;
     }
     try {
@@ -118,10 +118,10 @@ export default function CakeDetailPage() {
         positionX: 0.18 + Math.random() * 0.64,
         positionY: 0.18 + Math.random() * 0.64,
       });
-      toast.success("촛불과 편지가 올라갔어요.");
+      toast.success("촛불과 편지를 남겼어요.");
       setActiveSheet(null);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "전송에 실패했어요.");
+      toast.error(e instanceof Error ? e.message : "남기지 못했어요.");
       throw e;
     }
   };
@@ -140,7 +140,7 @@ export default function CakeDetailPage() {
       ? (id: string) =>
           saveLetter.mutate(id, {
             onSuccess: () => toast.success("보관함에 담았어요."),
-            onError: (e) => toast.error(e instanceof Error ? e.message : "보관함 저장에 실패했어요."),
+            onError: (e) => toast.error(e instanceof Error ? e.message : "보관함에 담지 못했어요."),
           })
       : undefined;
 
@@ -171,15 +171,15 @@ export default function CakeDetailPage() {
             forceUnlocked={isBirthdayKst}
             caption={
               letterQueryOn
-                ? "열린 편지는 아래 버튼에서 확인하세요."
-                : "친구들이 참여할수록 촛불이 쌓이고 편지가 열려요."
+                ? "편지는 아래에서 바로 확인해요."
+                : "친구가 편지를 남길수록 케이크가 더 화려해져요."
             }
             compact
           />
           <div className="mt-3 grid grid-cols-3 gap-2">
             <MiniStat label="촛불" value={`${cake.candleCount}`} />
             <MiniStat label="참여자" value={`${candles.length}`} />
-            <MiniStat label="편지" value={letterQueryOn ? `${letters.length}` : "잠김"} />
+            <MiniStat label="편지" value={letterQueryOn ? `${letters.length}` : "비공개"} />
           </div>
         </main>
 
@@ -190,7 +190,7 @@ export default function CakeDetailPage() {
               candles={candles}
               unlockStates={unlockStates}
               forceUnlocked={isBirthdayKst}
-              caption="공유할수록 촛불이 쌓이고, 케이크와 편지가 단계적으로 열립니다."
+              caption="공유할수록 편지가 쌓이고, 케이크가 계속 변해요."
             />
 
             <LetterWall
@@ -228,7 +228,7 @@ export default function CakeDetailPage() {
           <MobileDockButton icon={<MailOpen className="h-4 w-4" />} label="편지" onClick={() => setActiveSheet("letters")} />
           <MobileDockButton
             icon={<PenLine className="h-4 w-4" />}
-            label={isOwner ? "안내" : "쓰기"}
+            label={isOwner ? "안내" : "편지 쓰기"}
             primary
             onClick={() => setActiveSheet("write")}
           />
@@ -254,7 +254,7 @@ export default function CakeDetailPage() {
         )}
       </MobileSheet>
 
-      <MobileSheet open={activeSheet === "write"} title={isOwner ? "작성 안내" : "촛불 남기기"} onClose={() => setActiveSheet(null)}>
+      <MobileSheet open={activeSheet === "write"} title={isOwner ? "작성 안내" : "편지 쓰기"} onClose={() => setActiveSheet(null)}>
         <LetterComposer
           windowState={writeWindowState}
           openAt={cake.openAt}
@@ -314,21 +314,21 @@ function PublicLockedPreview({ names, candleCount }: { names: string[]; candleCo
     <GlassCard className="p-5 sm:p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">locked letters</p>
-          <h2 className="mt-2 text-2xl font-black tracking-[-0.04em] text-slate-950">편지는 아직 주인만의 서프라이즈</h2>
+          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">공개 전 편지</p>
+          <h2 className="mt-2 text-2xl font-black tracking-[-0.04em] text-slate-950">편지 내용은 아직 비공개예요</h2>
           <p className="mt-2 text-sm font-medium leading-6 text-slate-500">
-            본문은 공개하지 않지만, 촛불이 {candleCount}개 모였다는 사실은 모두에게 보여요.
+            지금까지 모인 촛불 {candleCount}개는 모두가 볼 수 있어요.
           </p>
         </div>
         <Lock className="h-5 w-5 text-slate-400" />
       </div>
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        {(visibleNames.length > 0 ? visibleNames : ["아직 첫 번째 친구를 기다리는 중"]).map((name, index) => (
+        {(visibleNames.length > 0 ? visibleNames : ["아직 첫 번째 축하를 기다리는 중"]).map((name, index) => (
           <div key={`${name}-${index}`} className="rounded-[1.5rem] bg-white/65 p-4 shadow-sm">
             <p className="text-sm font-black text-slate-950">{name}</p>
-            <p className="mt-1 text-xs font-bold text-slate-500">잠긴 편지 티저</p>
+            <p className="mt-1 text-xs font-bold text-slate-500">공개 전 미리보기</p>
             <div className="mt-3 select-none rounded-2xl bg-slate-100/80 p-3 text-sm font-bold text-transparent blur-[3px]">
-              생일 축하해. 이 문장은 생일 당일 주인에게만 열려요.
+              생일 축하해. 이 문장은 생일 당일 주인공에게 공개돼요.
             </div>
           </div>
         ))}

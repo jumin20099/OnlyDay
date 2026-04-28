@@ -38,11 +38,11 @@ export default function CakesPage() {
     if (!parsedBirthday) return;
     try {
       const cake = await createCake.mutateAsync({ title: title.trim() || "내 생일 케이크", flavor, birthday: parsedBirthday });
-      toast.success("케이크 링크가 만들어졌어요.");
+      toast.success("케이크가 열렸어요.");
       setCreateOpen(false);
       navigate(`/cake/${cake.shareToken}`);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "케이크 생성에 실패했어요.");
+      toast.error(e instanceof Error ? e.message : "케이크를 만들지 못했어요.");
     }
   };
 
@@ -56,9 +56,9 @@ export default function CakesPage() {
     }
     try {
       await deleteCake.mutateAsync(cakeId);
-      toast.success("케이크를 삭제했어요.");
+      toast.success("케이크를 지웠어요.");
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "삭제에 실패했어요.");
+      toast.error(e instanceof Error ? e.message : "지우지 못했어요.");
     }
   };
 
@@ -66,9 +66,9 @@ export default function CakesPage() {
     const url = `${window.location.origin}/cake/${shareToken}`;
     try {
       await navigator.clipboard.writeText(url);
-      toast.success("공유 링크를 복사했어요.");
+      toast.success("링크를 복사했어요.");
     } catch {
-      toast.error("링크 복사에 실패했어요.");
+      toast.error("링크를 복사하지 못했어요.");
     }
   };
 
@@ -101,11 +101,11 @@ export default function CakesPage() {
         <main className="grid gap-4 pt-5 sm:gap-6 sm:pt-10 lg:grid-cols-[minmax(0,1fr)_380px]">
           <section className="space-y-6">
             <div className="space-y-2 sm:space-y-3">
-              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">creator dashboard</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">내 케이크</p>
               <h1 className="max-w-3xl text-3xl font-black tracking-[-0.06em] text-slate-950 sm:text-5xl">
-                안녕, {user?.displayName ?? "친구"}.
+                반가워요, {user?.displayName ?? "친구"}.
                 <br />
-                올해 생일은 링크 하나로 모아봐요.
+                올해 생일은 단하루와 함께해요.
               </h1>
               <button
                 type="button"
@@ -133,15 +133,15 @@ export default function CakesPage() {
             <GlassCard className="p-4 sm:p-6">
               <div className="flex items-end justify-between gap-4">
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">my cakes</p>
-                  <h2 className="mt-1 text-xl font-black tracking-[-0.04em] text-slate-950 sm:mt-2 sm:text-2xl">공유 중인 케이크</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">케이크 목록</p>
+                  <h2 className="mt-1 text-xl font-black tracking-[-0.04em] text-slate-950 sm:mt-2 sm:text-2xl">내 케이크 목록</h2>
                 </div>
                 <span className="rounded-full bg-slate-950 px-3 py-1.5 text-xs font-black text-white">{cakes.length}</span>
               </div>
 
               {cakes.length === 0 ? (
                 <div className="mt-5 rounded-[1.5rem] border border-dashed border-slate-300 bg-white/55 p-6 text-center text-sm font-bold text-slate-500">
-                  아직 케이크가 없어요. 첫 케이크를 만들어 공유 흐름을 시작하세요.
+                  아직 케이크가 없어요. 첫 케이크로 오늘을 시작해요.
                 </div>
               ) : (
                 <ul className="mt-5 grid gap-3">
@@ -205,17 +205,17 @@ function CakeListItem({
         <button type="button" onClick={onOpen} className="min-w-0 flex-1 text-left">
           <p className="truncate text-base font-black tracking-[-0.03em] text-slate-950 sm:text-lg">{cake.title}</p>
           <p className="mt-1 text-xs font-bold text-slate-500">
-            {theme.label} · {cake.birthday} · {cake.candleCount}촛불
+            {theme.label} · {cake.birthday} · {cake.candleCount}개의 촛불
           </p>
         </button>
         <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl text-2xl sm:h-14 sm:w-14 sm:text-3xl" style={{ backgroundColor: theme.hero[1] }}>
           {theme.emoji}
         </span>
       </div>
-      <ProgressBar value={cake.candleCount} max={goal} label="공유 성장도" className="mt-3 sm:mt-4" />
+      <ProgressBar value={cake.candleCount} max={goal} label="촛불 개수" className="mt-3 sm:mt-4" />
       <div className="mt-3 flex flex-wrap gap-2 sm:mt-4">
         <button type="button" onClick={onOpen} className="rounded-full bg-slate-950 px-4 py-2 text-xs font-black text-white">
-          열기
+          보러 가기
         </button>
         <button
           type="button"

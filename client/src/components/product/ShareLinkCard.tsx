@@ -12,10 +12,9 @@ export function ShareLinkCard({ url, candleCount, onCopy, onShare }: Props) {
   return (
     <GlassCard className="overflow-hidden p-2 sm:p-4">
       <div className="rounded-[1.3rem] bg-slate-950 p-4 text-white sm:rounded-[1.5rem]">
-        <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/50">share to unlock</p>
-        <h3 className="mt-1 text-lg font-black tracking-[-0.04em] sm:mt-2 sm:text-xl">친구들이 켜준 촛불로 편지가 열려요</h3>
+        <h3 className="mt-1 text-lg font-black tracking-[-0.04em] sm:mt-2 sm:text-xl">친구의 촛불이 필요해요.</h3>
         <p className="mt-1 text-xs leading-5 text-white/65 sm:mt-2 sm:text-sm sm:leading-6">
-          현재 {candleCount}개의 촛불. 링크를 보내면 참여가 곧 성장이고, 성장이 곧 보상이에요.
+          지금 촛불은 총 {candleCount}개에요.<br></br> 링크를 공유하고 촛불을 모아보세요.
         </p>
         <div className="mt-3 rounded-2xl bg-white/10 px-3 py-2 text-[11px] font-semibold text-white/70 sm:mt-4">
           <span className="line-clamp-1 break-all">{url}</span>

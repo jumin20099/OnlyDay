@@ -26,7 +26,7 @@ export default function CakeShareResultPage() {
       await navigator.clipboard.writeText(pageUrl);
       toast.success("케이크 링크를 복사했어요.");
     } catch {
-      toast.error("복사에 실패했어요.");
+      toast.error("복사하지 못했어요.");
     }
   };
 
@@ -36,7 +36,7 @@ export default function CakeShareResultPage() {
       if (navigator.share) {
         await navigator.share({
           title: cake?.title ?? "Only Day",
-          text: "케이크에 촛불을 달아줘",
+          text: "여기에 촛불 하나 남겨줘",
           url: pageUrl,
         });
       } else {
@@ -85,14 +85,14 @@ export default function CakeShareResultPage() {
           <Link href={`/cake/${shareToken}`}>
             <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-2 text-xs font-black backdrop-blur">
               <ChevronLeft className="h-4 w-4" />
-              케이크로
+              케이크로 돌아가기
             </span>
           </Link>
           <BrandMark className="text-white/80" />
           <div className="flex flex-wrap items-center justify-end gap-1">
             <ActionButton onClick={copyPageLink} icon={<Link2 className="h-3.5 w-3.5" />} label="링크 복사" />
             <ActionButton onClick={sharePage} icon={<Share2 className="h-3.5 w-3.5" />} label="공유" />
-            <ActionButton onClick={downloadPng} icon={<Download className="h-3.5 w-3.5" />} label={exporting ? "저장 중" : "이미지"} disabled={exporting} />
+            <ActionButton onClick={downloadPng} icon={<Download className="h-3.5 w-3.5" />} label={exporting ? "저장 중" : "이미지 저장"} disabled={exporting} />
           </div>
         </header>
 
@@ -140,14 +140,14 @@ export default function CakeShareResultPage() {
           </div>
 
           <section className="space-y-5 text-white">
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/45">story-ready share asset</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/45">스토리에 올려요</p>
             <h2 className="max-w-xl text-5xl font-black leading-[0.98] tracking-[-0.07em]">
-              인스타 스토리에 올리고,
+              스토리에 올리고,
               <br />
-              촛불을 더 모으세요.
+              촛불을 더 모아봐요.
             </h2>
             <p className="max-w-lg text-sm font-semibold leading-7 text-white/60">
-              공유 이미지는 참여를 다시 케이크로 돌려보내는 성장 루프입니다. 링크 복사와 시스템 공유를 함께 제공해 놓았습니다.
+              한 번의 공유가 다시 참여를 불러와요. 링크 복사와 시스템 공유로 더 쉽게 퍼뜨릴 수 있어요.
             </p>
             <div className="max-w-md rounded-[2rem] bg-white/10 p-5 backdrop-blur">
               <ProgressBar value={cake.candleCount} max={goal} label="공유 성장도" />

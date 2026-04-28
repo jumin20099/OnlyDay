@@ -26,33 +26,22 @@ export function LetterWall({
 
   return (
     <GlassCard className="p-4 sm:p-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-400">letter vault</p>
-          <h2 className="mt-1 text-xl font-black tracking-[-0.04em] text-slate-950 sm:mt-2 sm:text-2xl">편지 보관함</h2>
-        </div>
-        <span className="rounded-full bg-white px-3 py-1.5 text-xs font-black text-slate-700 shadow-sm">
-          {unlocked.length}/{letters.length} open
-        </span>
-      </div>
-
       {!canReadLetters ? (
         <div className="mt-3 rounded-[1.3rem] border border-dashed border-slate-300 bg-white/55 p-4 text-xs font-semibold leading-5 text-slate-500 sm:mt-5 sm:rounded-[1.5rem] sm:p-5 sm:text-sm sm:leading-6">
-          편지 본문은 케이크 주인이 생일 당일에만 확인할 수 있어요. 지금은 촛불과 참여자만 공개됩니다.
+          편지 내용은 생일 당일에 공개돼요.
         </div>
       ) : null}
 
       {lettersPending ? (
-        <div className="mt-3 rounded-[1.3rem] bg-white/55 p-4 text-sm font-bold text-slate-500 sm:mt-5 sm:rounded-[1.5rem] sm:p-5">편지를 불러오는 중...</div>
+        <div className="mt-3 rounded-[1.3rem] bg-white/55 p-4 text-sm font-bold text-slate-500 sm:mt-5 sm:rounded-[1.5rem] sm:p-5">편지를 모아오는 중…</div>
       ) : null}
 
       {canReadLetters && !lettersPending && letters.length === 0 ? (
-        <div className="mt-3 rounded-[1.3rem] bg-white/55 p-4 text-sm font-bold text-slate-500 sm:mt-5 sm:rounded-[1.5rem] sm:p-5">아직 도착한 편지가 없어요.</div>
+        <div className="mt-3 rounded-[1.3rem] bg-white/55 p-4 text-sm font-bold text-slate-500 sm:mt-5 sm:rounded-[1.5rem] sm:p-5">아직 도착한 축하가 없어요.</div>
       ) : null}
 
       {canReadLetters && unlocked.length > 0 ? (
         <div className="mt-4 grid gap-3 sm:mt-6">
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">unlocked</p>
           {unlocked.map((letter) => (
             <OpenLetterCard
               key={letter.letterId}
@@ -66,7 +55,7 @@ export function LetterWall({
 
       {canReadLetters && locked.length > 0 ? (
         <div className="mt-4 grid gap-3 sm:mt-6">
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">locked teasers</p>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">공개 전 미리보기</p>
           {locked.map((letter) => {
             const index = letters.findIndex((candidate) => candidate.letterId === letter.letterId);
             return (
@@ -95,16 +84,15 @@ function OpenLetterCard({
   saveLetterPending: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const body = letter.content?.trim() || "(빈 편지)";
+  const body = letter.content?.trim() || "(내용 없음)";
   return (
     <article className="rounded-[1.3rem] border border-white/80 bg-white/70 p-3 shadow-sm sm:rounded-[1.5rem] sm:p-4">
       <button type="button" className="flex w-full items-center justify-between gap-3 text-left" onClick={() => setExpanded((v) => !v)}>
         <span>
           <span className="flex items-center gap-2 text-sm font-black text-slate-950">
             <MailOpen className="h-4 w-4 text-indigo-500" />
-            {letter.nickname}
+            {letter.nickname}님에게서 온 편지
           </span>
-          <span className="mt-1 block text-xs font-semibold text-slate-500">열린 편지</span>
         </span>
         <span className="rounded-full bg-slate-950 px-3 py-1 text-[10px] font-black text-white">
           {expanded ? "접기" : "읽기"}
@@ -122,7 +110,7 @@ function OpenLetterCard({
               className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-700 disabled:opacity-50"
             >
               <Bookmark className="h-4 w-4" />
-              {saveLetterPending ? "저장 중" : "보관함 저장"}
+              {saveLetterPending ? "담는 중…" : "보관함에 담기"}
             </button>
           ) : null}
         </div>
@@ -153,18 +141,18 @@ function LockedLetterTeaser({
             {nickname}
           </p>
           <p className="mt-1 text-xs font-semibold text-slate-500">
-            {ordinal}번째 편지 · 촛불 {required}개에 열림
+            {ordinal}번째 편지 · 촛불 {required}개부터 공개
           </p>
         </div>
         <span className="rounded-full bg-white px-3 py-1 text-[10px] font-black text-slate-500">
-          {remaining > 0 ? `+${remaining}` : "soon"}
+          {remaining > 0 ? `+${remaining}` : "공개 임박"}
         </span>
       </div>
       <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-200/70">
         <div className="h-full rounded-full bg-gradient-to-r from-slate-900 to-indigo-400" style={{ width: `${pct}%` }} />
       </div>
       <div className="mt-3 select-none rounded-2xl bg-slate-100/80 p-3 text-sm font-bold text-transparent blur-[3px] sm:mt-4">
-        생일 축하해. 이 문장은 아직 촛불이 더 모이면 공개돼요.
+        촛불이 더 모이면 이 문장이 보여요.
       </div>
     </article>
   );

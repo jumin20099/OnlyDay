@@ -30,7 +30,7 @@ export default function LoginPage() {
       }
       navigate(nextPath);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "인증에 실패했어요.");
+      toast.error(e instanceof Error ? e.message : "로그인에 실패했어요.");
     }
   };
   const message =
@@ -51,25 +51,25 @@ export default function LoginPage() {
 
         <div className="mx-auto grid w-full max-w-5xl gap-4 pt-14 sm:gap-6 sm:pt-0 lg:grid-cols-[1fr_430px] lg:items-center">
           <div className="hidden space-y-5 text-white sm:block">
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/45">secure creator access</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-white/45">내 케이크로 가는 문</p>
             <h1 className="max-w-xl text-5xl font-black leading-[0.98] tracking-[-0.07em] sm:text-6xl">
               케이크를 만들고,
               <br />
               생일 당일에만 열어보세요.
             </h1>
             <p className="max-w-lg text-sm font-semibold leading-7 text-white/60">
-              로그인은 케이크 소유권과 편지 열람 조건을 지키기 위한 최소 장치입니다.
-              친구들은 공유 링크에서 로그인 없이 참여할 수 있어요.
+              로그인하면 내 케이크를 지킬 수 있어요.
+              친구들은 링크만으로 가볍게 참여할 수 있어요.
             </p>
           </div>
 
           <GlassCard className="p-4 text-slate-950 sm:p-8">
             <div className="space-y-2">
               <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-400">
-                {mode === "login" ? "welcome back" : "join only day"}
+                {mode === "login" ? "다시 만나서 반가워요" : "처음이라 더 반가워요"}
               </p>
               <h2 className="text-2xl font-black tracking-[-0.05em] sm:text-3xl">
-                {mode === "login" ? "다시 만나서 반가워요" : "첫 케이크를 만들 준비"}
+                {mode === "login" ? "오늘의 케이크를 열어볼까요?" : "첫 케이크를 시작해볼까요?"}
               </h2>
             </div>
 
@@ -87,7 +87,7 @@ export default function LoginPage() {
                 <FieldIcon icon={<UserRound className="h-4 w-4" />}>
                   <input
                     className="w-full bg-transparent py-2.5 text-sm font-semibold text-slate-950 outline-none placeholder:text-slate-400 sm:py-3"
-                    placeholder="닉네임 (표시 이름)"
+                    placeholder="닉네임"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
                   />
@@ -118,7 +118,7 @@ export default function LoginPage() {
               className="mt-4 w-full text-center text-xs font-black text-slate-500 underline-offset-4 transition hover:text-slate-950 hover:underline"
               onClick={() => setMode((v) => (v === "login" ? "signup" : "login"))}
             >
-              {mode === "login" ? "계정이 없다면 가입" : "이미 계정이 있어요"}
+              {mode === "login" ? "아직 계정이 없다면 가입하기" : "이미 계정이 있다면 로그인"}
             </button>
             {message ? <p className="mt-4 text-center text-xs font-bold text-red-600">{message}</p> : null}
           </GlassCard>

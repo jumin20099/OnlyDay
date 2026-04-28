@@ -37,36 +37,36 @@ export function LandingHero({ isAuthenticated, onCreate, onDashboard, onLogin }:
 
       <section className="grid min-h-[calc(100dvh-76px)] gap-6 pt-8 sm:min-h-0 sm:gap-8 sm:pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:pt-20">
         <div className="flex flex-col justify-center space-y-5 sm:block sm:space-y-7">
-          <SectionLabel>birthday surprise loop</SectionLabel>
+          <SectionLabel>오늘의 생일 무드</SectionLabel>
           <div className="space-y-3 sm:space-y-5">
             <h1 className="max-w-3xl text-4xl font-black leading-[0.96] tracking-[-0.07em] text-slate-950 sm:text-7xl">
-              생일 편지를
+              촛불을 모아,
               <br />
-              케이크처럼 모으는 법
+              케이크를 완성하세요
             </h1>
             <p className="max-w-xl text-sm font-medium leading-6 text-slate-600 sm:text-lg sm:leading-8">
-              링크 하나로 친구들이 촛불과 편지를 남기고, 촛불이 모일수록 잠긴 마음이 하나씩 열려요.
-              과한 꾸밈 없이, 공유하고 싶은 순간만 남깁니다.
+              친구들이 남긴 편지가 쌓일수록,
+              <br className="hidden sm:block" /> 케이크가 점점 화려해져요.
             </p>
           </div>
 
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
             <PrimaryCTA onClick={onCreate} className="w-full sm:w-auto">
-              Create Cake
+              내 케이크 만들기
             </PrimaryCTA>
             <button
               type="button"
               onClick={isAuthenticated ? onDashboard : onLogin}
               className="rounded-full border border-slate-300/80 bg-white/60 px-5 py-3 text-sm font-black text-slate-800 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:bg-white"
             >
-              {isAuthenticated ? "내 케이크 보기" : "먼저 로그인"}
+              {isAuthenticated ? "내 케이크 보기" : "편지 모으기 시작하기"}
             </button>
           </div>
 
           <div className="grid max-w-xl grid-cols-3 gap-2 text-xs font-bold text-slate-600">
-            <MiniMetric icon={<Share2 className="h-4 w-4" />} title="Share" body="링크로 참여" />
-            <MiniMetric icon={<Flame className="h-4 w-4" />} title="Grow" body="촛불 progress" />
-            <MiniMetric icon={<Gift className="h-4 w-4" />} title="Unlock" body="생일 보상" />
+            <MiniMetric icon={<Share2 className="h-4 w-4" />} title="공유" body="링크로 모으기" />
+            <MiniMetric icon={<Flame className="h-4 w-4" />} title="성장" body="편지가 쌓여요" />
+            <MiniMetric icon={<Gift className="h-4 w-4" />} title="변화" body="케이크가 화려해져요" />
           </div>
         </div>
 
@@ -76,9 +76,9 @@ export function LandingHero({ isAuthenticated, onCreate, onDashboard, onLogin }:
           <div className="relative overflow-hidden rounded-[1.5rem] bg-slate-950 p-5 text-white">
             <div className="flex items-center justify-between">
               <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em]">
-                live cake
+                첫 촛불을 기다리는 케이크
               </span>
-              <span className="text-xs text-white/60">24 candles</span>
+              <span className="text-xs text-white/60">촛불 24개</span>
             </div>
             <div className="mt-8 grid place-items-center">
               <div className="relative grid aspect-square w-64 place-items-center rounded-full bg-[radial-gradient(circle_at_30%_20%,#dbeafe_0,transparent_45%),linear-gradient(145deg,#f8fafc,#fde68a)] shadow-2xl">
@@ -96,8 +96,8 @@ export function LandingHero({ isAuthenticated, onCreate, onDashboard, onLogin }:
               </div>
             </div>
             <div className="mt-7 rounded-3xl bg-white/10 p-4 backdrop-blur">
-              <p className="text-sm font-black">3번째 편지까지 열림</p>
-              <p className="mt-1 text-xs leading-5 text-white/65">친구 한 명이 더 촛불을 켜면 다음 편지가 공개돼요.</p>
+              <p className="text-sm font-black">하나씩 쌓인 마음이, 케이크를 바꿔요</p>
+              <p className="mt-1 text-xs leading-5 text-white/65">편지가 모일수록 케이크 분위기가 달라져요.</p>
             </div>
           </div>
         </GlassCard>
