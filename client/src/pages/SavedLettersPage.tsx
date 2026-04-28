@@ -1,14 +1,29 @@
 import { BrandMark, GlassCard, ProductContainer, ProductShell } from "@/components/product/Primitives";
 import { useAuthState } from "@/hooks/useAuth";
-import { useSavedLetters } from "@/hooks/useCakeLetterApi";
-import { useEffect } from "react";
+import { useRemoveSavedLetter, useSavedLetters } from "@/hooks/useCakeLetterApi";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { ChevronLeft, MailOpen } from "lucide-react";
+import { toast } from "sonner";
+
+function formatSavedAt(value: string) {
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return value;
+  return new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(d);
+}
 
 export default function SavedLettersPage() {
   const { isAuthenticated } = useAuthState();
   const [, setLocation] = useLocation();
   const { data: letters = [] } = useSavedLetters({ enabled: isAuthenticated });
+  const removeSavedLetter = useRemoveSavedLetter();
+  const [pendingSourceLetterId, setPendingSourceLetterId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -51,12 +66,29 @@ export default function SavedLettersPage() {
             <div className="grid gap-4">
               {letters.map((letter) => (
                 <GlassCard key={letter.savedLetterId} className="p-5">
-                  <p className="flex items-center gap-2 text-sm font-black text-slate-950">
-                    <MailOpen className="h-4 w-4 text-indigo-500" />
-                    {letter.nickname}
-                  </p>
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="flex items-center gap-2 text-sm font-black text-slate-950">
+                      <MailOpen className="h-4 w-4 text-indigo-500" />
+                      {letter.nickname}
+                    </p>
+                    <button
+                      type="button"
+                      className="u-btn u-btn-secondary px-3 py-2 text-[11px] disabled:opacity-55"
+                      disabled={pendingSourceLetterId === letter.sourceLetterId}
+                      onClick={() => {
+                        setPendingSourceLetterId(letter.sourceLetterId);
+                        removeSavedLetter.mutate(letter.sourceLetterId, {
+                          onSuccess: () => toast.success("보관함에서 삭제했어요."),
+                          onError: (e) => toast.error(e instanceof Error ? e.message : "삭제하지 못했어요."),
+                          onSettled: () => setPendingSourceLetterId((prev) => (prev === letter.sourceLetterId ? null : prev)),
+                        });
+                      }}
+                    >
+                      {pendingSourceLetterId === letter.sourceLetterId ? "삭제 중..." : "삭제"}
+                    </button>
+                  </div>
                   <p className="mt-3 whitespace-pre-wrap text-sm font-medium leading-7 text-slate-700">{letter.content}</p>
-                  <p className="mt-4 text-xs font-bold text-slate-400">{letter.savedAt}</p>
+                  <p className="mt-4 text-xs font-bold text-slate-400">{formatSavedAt(letter.savedAt)}</p>
                 </GlassCard>
               ))}
             </div>

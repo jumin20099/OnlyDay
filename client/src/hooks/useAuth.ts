@@ -8,17 +8,34 @@ import { useSyncExternalStore } from "react";
 type LoginInput = { email: string; password: string };
 type SignupInput = { email: string; password: string; displayName: string };
 
+function extractServerErrorMessage(error: unknown) {
+  if (!axios.isAxiosError(error)) return null;
+  const data = error.response?.data as
+    | { error?: { message?: string }; message?: string }
+    | undefined;
+  return data?.error?.message ?? data?.message ?? null;
+}
+
 function getAuthErrorMessage(error: unknown, mode: "login" | "signup") {
   if (!axios.isAxiosError(error)) {
     return mode === "login" ? "로그인에 실패했어요." : "회원가입에 실패했어요.";
   }
 
   const status = error.response?.status;
+  const serverMessage = extractServerErrorMessage(error);
   if (mode === "login" && (status === 400 || status === 401)) {
     return "이메일 또는 비밀번호가 올바르지 않아요.";
   }
   if (mode === "signup" && status === 409) {
     return "이미 가입된 이메일이에요.";
+  }
+  if (mode === "signup" && status === 400 && serverMessage) {
+    if (/email|이메일/i.test(serverMessage)) return "이메일 형식을 확인해 주세요.";
+    if (/name|nickname|닉네임/i.test(serverMessage)) return "닉네임을 다시 확인해 주세요.";
+    return serverMessage;
+  }
+  if (mode === "signup" && serverMessage) {
+    return serverMessage;
   }
   return mode === "login" ? "로그인에 실패했어요." : "회원가입에 실패했어요.";
 }

@@ -200,6 +200,17 @@ export function useSavedLetters(options?: { enabled?: boolean }) {
   });
 }
 
+export function useRemoveSavedLetter() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (savedLetterId: string) => {
+      const { data } = await api.delete<ApiResponse<null>>(`/api/saved-letters/${savedLetterId}`);
+      if (!data.success) throw new Error(data.error?.message ?? "보관함 편지 삭제 실패");
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["saved-letters"] }),
+  });
+}
+
 export async function uploadImageToStorage(file: File, folder = "letters") {
   const form = new FormData();
   form.append("file", file);
