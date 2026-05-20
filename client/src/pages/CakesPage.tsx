@@ -1,6 +1,5 @@
 import { CreateCakePanel } from "@/components/product/CreateCakePanel";
 import { AdSlot, BrandMark, GlassCard, MobileSheet, ProductContainer, ProductShell, ProgressBar } from "@/components/product/Primitives";
-import { PremiumRail } from "@/components/product/PremiumRail";
 import { logout, useAuthState } from "@/hooks/useAuth";
 import { useCakes, useCreateCake, useDeleteCake } from "@/hooks/useCakeLetterApi";
 import { parseBirthdayInputToIso, isValidCalendarDateYmd } from "@/lib/birthdayInput";
@@ -98,7 +97,7 @@ export default function CakesPage() {
           </div>
         </header>
 
-        <main className="grid gap-4 pt-5 sm:gap-6 sm:pt-10 lg:grid-cols-[minmax(0,1fr)_380px]">
+        <main className="grid gap-4 pt-5 sm:gap-6 sm:pt-10">
           <section className="space-y-6">
             <div className="space-y-2 sm:space-y-3">
               <p className="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">내 케이크</p>
@@ -158,12 +157,10 @@ export default function CakesPage() {
                 </ul>
               )}
             </GlassCard>
+            <div className="hidden sm:block">
+              <AdSlot />
+            </div>
           </section>
-
-          <aside className="hidden space-y-4 sm:block">
-            <PremiumRail />
-            <AdSlot />
-          </aside>
         </main>
       </ProductContainer>
 

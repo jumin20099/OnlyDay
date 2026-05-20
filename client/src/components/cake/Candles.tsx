@@ -5,10 +5,24 @@ type Props = {
   count: number;
   colors: CandleColor[];
   locked: boolean;
+  visualLevel?: number;
 };
 
-function positionFor(index: number, count: number) {
-  if (count <= 1) return { x: 200, y: 126, scale: 1 };
+function topTierForLevel(level: number) {
+  if (level >= 4) return { scale: 0.64, topY: 96 };
+  if (level >= 3) return { scale: 0.72, topY: 132 };
+  return { scale: 1, topY: 214 };
+}
+
+function positionFor(index: number, count: number, visualLevel: number) {
+  const tier = topTierForLevel(visualLevel);
+  if (count <= 1) {
+    return {
+      x: 200,
+      y: tier.topY + (126 - 214) * tier.scale,
+      scale: 0.78 + tier.scale * 0.2,
+    };
+  }
   const rowSize = Math.ceil(Math.sqrt(count));
   const row = Math.floor(index / rowSize);
   const col = index % rowSize;
@@ -17,21 +31,26 @@ function positionFor(index: number, count: number) {
   const normalizedCol = itemsInRow === 1 ? 0.5 : col / (itemsInRow - 1);
   const normalizedRow = rows === 1 ? 0.5 : row / (rows - 1);
   const rx = 88 - row * 5;
-  const x = 200 - rx + normalizedCol * rx * 2;
-  const y = 118 + normalizedRow * 58 + Math.sin((index + 1) * 1.7) * 4;
+  const baseX = 200 - rx + normalizedCol * rx * 2;
+  const baseY = 118 + normalizedRow * 58 + Math.sin((index + 1) * 1.7) * 4;
   const edge = Math.abs(normalizedCol - 0.5) * 2;
-  const scale = 0.82 + (1 - edge) * 0.12 - Math.max(0, count - 24) * 0.004;
-  return { x, y, scale: Math.max(0.56, scale) };
+  const baseScale = 0.82 + (1 - edge) * 0.12 - Math.max(0, count - 24) * 0.004;
+
+  return {
+    x: 200 + (baseX - 200) * tier.scale,
+    y: tier.topY + (baseY - 214) * tier.scale,
+    scale: Math.max(0.5, baseScale * (0.78 + tier.scale * 0.2)),
+  };
 }
 
-export function Candles({ count, colors, locked }: Props) {
+export function Candles({ count, colors, locked, visualLevel = 1 }: Props) {
   const safeCount = Math.max(0, Math.floor(count));
   const palette = colors.length > 0 ? colors : (["yellow"] satisfies CandleColor[]);
 
   return (
     <g>
       {Array.from({ length: safeCount }).map((_, index) => {
-        const pos = positionFor(index, safeCount);
+        const pos = positionFor(index, safeCount, visualLevel);
         return (
           <Candle
             key={index}
@@ -41,6 +60,7 @@ export function Candles({ count, colors, locked }: Props) {
             scale={pos.scale}
             delay={(index % 7) * 110}
             locked={locked}
+            visualLevel={visualLevel}
           />
         );
       })}

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs grep -l \"html2canvas\")",
+      "Read(//c/Users/김주민/.claude/projects/C--Users-----Desktop-OnlyDay/**)",
+      "Bash(npx tsc *)",
+      "Bash(xargs grep -l \"contrast\\\\|#\\\\|color:\")",
+      "Bash(cd C:\\\\Users\\\\김주민\\\\Desktop\\\\OnlyDay *)"
+    ]
+  }
+}

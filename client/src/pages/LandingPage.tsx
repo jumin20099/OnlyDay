@@ -1,6 +1,5 @@
 import { AdSlot, GlassCard, ProductContainer, ProductShell, SectionLabel } from "@/components/product/Primitives";
 import { LandingHero } from "@/components/product/LandingHero";
-import { PremiumRail } from "@/components/product/PremiumRail";
 import { useAuthState } from "@/hooks/useAuth";
 import { Link, useLocation } from "wouter";
 import { Lock, MessageCircle, Share2, Sparkles } from "lucide-react";
@@ -55,11 +54,6 @@ export default function LandingPage() {
             </Link>
           </GlassCard>
         </section>
-
-        <div className="space-y-4">
-          <PremiumRail />
-          <AdSlot label="광고 영역" />
-        </div>
       </ProductContainer>
     </ProductShell>
   );

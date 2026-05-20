@@ -1,5 +1,13 @@
 import { useEffect, useState, type ReactNode } from "react";
+import { Link } from "wouter";
 import { ArrowRight, Sparkles, X } from "lucide-react";
+import {
+  adsenseClient,
+  adsenseDefaultSlot,
+  ensureAdSenseScript,
+  isAdSenseEnabled,
+  pushAdSenseSlot,
+} from "@/lib/adsense";
 
 type ShellProps = {
   children: ReactNode;
@@ -18,10 +26,64 @@ const shellTone = {
 
 export function ProductShell({ children, tone = "cream", className = "" }: ShellProps) {
   return (
-    <div className={`min-h-dvh overflow-x-hidden ${shellTone[tone]} ${className}`}>
+    <div className={`flex min-h-dvh flex-col overflow-x-hidden ${shellTone[tone]} ${className}`}>
       <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.35)_0,transparent_38%,rgba(255,255,255,0.24)_100%)]" />
-      <div className="relative z-10">{children}</div>
+      <div className="relative z-10 flex-1">{children}</div>
+      <ShellFooter />
     </div>
+  );
+}
+
+const TOSS_URL = (import.meta.env.VITE_DONATE_TOSS_URL ?? "").trim();
+const KAKAOPAY_URL = (import.meta.env.VITE_DONATE_KAKAOPAY_URL ?? "").trim();
+const DONATIONS_ENABLED = Boolean(TOSS_URL || KAKAOPAY_URL);
+
+export function ShellFooter() {
+  return (
+    <footer className="relative z-10 mt-8 border-t border-white/40 bg-white/30 backdrop-blur-sm">
+      {DONATIONS_ENABLED ? (
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-2 px-4 pt-4 text-center">
+          <p className="text-[11px] font-semibold text-slate-500">단하루가 마음에 들었다면 커피 한 잔으로 응원해주세요</p>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {TOSS_URL ? (
+              <a
+                href={TOSS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center rounded-full bg-[#0064FF] px-4 py-2 text-[11px] font-black text-white"
+              >
+                토스로 후원
+              </a>
+            ) : null}
+            {KAKAOPAY_URL ? (
+              <a
+                href={KAKAOPAY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center rounded-full bg-[#FEE500] px-4 py-2 text-[11px] font-black text-[#181600]"
+              >
+                카카오페이로 후원
+              </a>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-3 gap-y-1 px-4 py-4 text-[11px] font-semibold text-slate-500">
+        <Link href="/about">
+          <span className="cursor-pointer hover:text-slate-700">소개</span>
+        </Link>
+        <span className="text-slate-300">·</span>
+        <Link href="/privacy">
+          <span className="cursor-pointer hover:text-slate-700">개인정보 처리방침</span>
+        </Link>
+        <span className="text-slate-300">·</span>
+        <Link href="/terms">
+          <span className="cursor-pointer hover:text-slate-700">이용약관</span>
+        </Link>
+        <span className="text-slate-300">·</span>
+        <span>© 2026 단하루</span>
+      </div>
+    </footer>
   );
 }
 
@@ -138,11 +200,28 @@ export function ProgressBar({
   );
 }
 
-export function AdSlot({ label = "광고 영역" }: { label?: string }) {
+export function AdSlot({ slot, label = "" }: { slot?: string; label?: string }) {
+  const adSlot = slot ?? adsenseDefaultSlot;
+  const enabled = isAdSenseEnabled() && Boolean(adSlot);
+
+  useEffect(() => {
+    if (!enabled) return;
+    ensureAdSenseScript();
+    pushAdSenseSlot();
+  }, [enabled, adSlot]);
+
+  if (!enabled) return null;
+
   return (
-    <div className="rounded-2xl border border-dashed border-slate-300/80 bg-white/35 p-3 text-center text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400 sm:rounded-3xl sm:p-4 sm:text-[11px]">
-      {label}
-    </div>
+    <ins
+      className="adsbygoogle block"
+      style={{ display: "block" }}
+      data-ad-client={adsenseClient!}
+      data-ad-slot={adSlot!}
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+      aria-label={label || undefined}
+    />
   );
 }
 
@@ -151,11 +230,14 @@ export function MobileSheet({
   title,
   onClose,
   children,
+  allScreens = false,
 }: {
   open: boolean;
   title: string;
   onClose: () => void;
   children: ReactNode;
+  /** true면 데스크톱에서도 표시 (기본은 모바일 전용) */
+  allScreens?: boolean;
 }) {
   const [shouldRender, setShouldRender] = useState(open);
   const [visible, setVisible] = useState(false);
@@ -175,7 +257,12 @@ export function MobileSheet({
   if (!shouldRender) return null;
 
   return (
-    <div className="fixed inset-0 z-[220] lg:hidden" role="dialog" aria-modal="true" aria-label={title}>
+    <div
+      className={`fixed inset-0 z-[220] ${allScreens ? "" : "lg:hidden"}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+    >
       <button
         type="button"
         className={`absolute inset-0 bg-slate-950/45 backdrop-blur-[2px] transition-opacity duration-[180ms] ${visible ? "opacity-100" : "opacity-0"}`}

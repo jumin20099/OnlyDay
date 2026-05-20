@@ -20,6 +20,10 @@ export default function CakeShareResultPage() {
       ? `${window.location.origin}/cake/${shareToken}`
       : "";
 
+  const publicHost =
+    (import.meta.env.VITE_PUBLIC_HOST ?? "").trim() ||
+    (typeof window !== "undefined" ? window.location.host : "");
+
   const copyPageLink = async () => {
     if (!pageUrl) return;
     try {
@@ -134,7 +138,11 @@ export default function CakeShareResultPage() {
                     {candles.length > 10 ? "..." : ""}
                   </p>
                 ) : null}
-                <p className="mt-4 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">#단하루</p>
+                <div className="mt-4 flex items-center justify-center gap-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+                  <span>단하루</span>
+                  <span className="text-slate-300">·</span>
+                  <span className="normal-case tracking-normal">{publicHost}</span>
+                </div>
               </div>
             </div>
           </div>

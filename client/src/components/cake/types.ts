@@ -74,6 +74,8 @@ export type CakeProps = {
   progressGoal?: number;
   themeOverride?: CakeThemeOverride;
   premiumGlow?: boolean;
+  hideCandles?: boolean;
+  displayCandleCount?: number;
   "aria-label"?: string;
 };
 
@@ -82,3 +84,5 @@ export type CakeLayerProps = {
   locked: boolean;
   idPrefix: string;
 };
+
+export type CakeVisualLevel = 1 | 2 | 3 | 4 | 5;

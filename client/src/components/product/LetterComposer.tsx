@@ -58,7 +58,7 @@ export function LetterComposer({ windowState, openAt, closeAt, isOwner, pending 
 
       {isOwner ? (
         <p className="mt-3 rounded-2xl bg-slate-100/80 p-3 text-xs font-bold leading-5 text-slate-500">
-          주인은 직접 남길 수 없어요. 대신 편지를 확인하고 링크를 더 널리 나눠보세요.
+          주인공은 직접 남길 수 없어요. 대신 편지를 확인하고 링크를 더 널리 나눠보세요.
         </p>
       ) : null}
 
@@ -111,6 +111,13 @@ export function LetterComposer({ windowState, openAt, closeAt, isOwner, pending 
             {content.length}/{MAX}
           </span>
         </label>
+
+        {!isOwner ? (
+          <ul className="space-y-1 rounded-2xl bg-slate-50/80 px-4 py-3 text-[11px] font-semibold leading-5 text-slate-500">
+            <li>· 본문은 생일 당일 0시에 모두에게 한꺼번에 공개돼요.</li>
+            <li>· 보관함에 담기지 않은 편지는 생일 +14일에 사라져요.</li>
+          </ul>
+        ) : null}
 
         <button
           type="button"

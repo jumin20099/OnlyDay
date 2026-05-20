@@ -57,7 +57,7 @@ export default function LoginPage() {
 
         <div className="mx-auto grid w-full max-w-5xl gap-4 pt-14 sm:gap-6 sm:pt-0 lg:grid-cols-[1fr_430px] lg:items-center">
           <div className="hidden space-y-5 sm:block">
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">단하루, OnlyDay</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-slate-400">단하루</p>
             <h1 className="max-w-xl text-5xl font-black leading-[0.98] tracking-[-0.07em] sm:text-6xl">
               <span className="bg-gradient-to-r from-[var(--color-primary)] to-[#d58dc8] bg-clip-text text-transparent">
                 단하루
@@ -139,7 +139,7 @@ export default function LoginPage() {
               onClick={submit}
               disabled={login.isPending || signup.isPending || passwordMismatch}
             >
-              {login.isPending || signup.isPending ? "잠시만…" : mode === "login" ? "로그인" : "가입하고 시작"}
+              {login.isPending || signup.isPending ? "로그인 중" : mode === "login" ? "로그인" : "가입하고 시작"}
             </button>
             <button
               type="button"

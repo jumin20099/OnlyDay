@@ -1,7 +1,7 @@
 import type { Cake } from "@/types/api";
 import { FLAVOR_THEME } from "@/lib/onlydayTheme";
 import { GlassCard, PrimaryCTA } from "./Primitives";
-import { Cake as CakePreview, apiFlavorToCakeFlavor } from "@/components/cake";
+import { CreateCakeSplendorPreview } from "@/components/product/CreateCakeSplendorPreview";
 import { CalendarDays, Sparkles } from "lucide-react";
 
 export const PRODUCT_FLAVORS: Cake["flavor"][] = [
@@ -74,17 +74,7 @@ export function CreateCakePanel({
             미리보기
           </span>
         </div>
-        <div className="mx-auto mt-1 aspect-[4/3] max-h-44 max-w-[15rem] -translate-y-4 sm:translate-y-0 sm:max-h-52">
-          <CakePreview
-            flavor={apiFlavorToCakeFlavor(flavor)}
-            candleCount={7}
-            candleColors={["yellow", "pink", "lime", "blue"]}
-            unlocked
-            progressGoal={12}
-            premiumGlow
-            aria-label={`${selectedTheme.label} 케이크 디자인 미리보기`}
-          />
-        </div>
+        <CreateCakeSplendorPreview title={title.trim() || "내 생일 케이크"} flavor={flavor} />
       </div>
 
       <div className="mt-4 grid gap-3 sm:mt-6 sm:gap-4">
@@ -118,6 +108,7 @@ export function CreateCakePanel({
 
         <div>
           <p className="text-sm font-bold text-slate-700">맛</p>
+          <p className="mt-1 text-[11px] font-medium leading-4 text-slate-400">맛에 따라 케이크의 기본 색감이 정해져요.</p>
           <div className="mt-2 grid grid-cols-5 gap-1.5 sm:mt-3 sm:gap-2">
             {PRODUCT_FLAVORS.map((f) => {
               const t = FLAVOR_THEME[f];
